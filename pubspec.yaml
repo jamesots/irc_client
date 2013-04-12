@@ -1,0 +1,10 @@
+name: irc_client
+version: 0.0.1
+author: James Ots
+description: IRC client library
+dev_dependencies:
+  unittest: any
+  http: any
+
+#dependencies:
+#  unittest: any
