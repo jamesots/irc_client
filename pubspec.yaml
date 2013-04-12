@@ -1,7 +1,8 @@
 name: irc_client
 version: 0.0.1
-author: James Ots
+author: James Ots <code@jamesots.com>
 description: IRC client library
+homepage: https://github.com/jamesots/irc_client
 dev_dependencies:
   unittest: any
   http: any
