@@ -1,0 +1,252 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Command class / irc_client Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="irc_client" data-type="Command">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../irc_client.html">irc_client</a> &rsaquo; <a href="../irc_client/Command.html">Command</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Command</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>Contains a command which was received from the IRC server.</p>
+<pre class="source">
+class Command {
+ /**
+  * The prefix without the leading colon (:), or null if there was not one.
+  */
+ String prefix;
+ 
+ /**
+  * The command.
+  */
+ String command;
+ 
+ /**
+  * A list of the parameters, including the trailing parameters.
+  */
+ List&lt;String&gt; params;
+ 
+ /**
+  * Contains the original line received from the server.
+  */
+ String line;
+ 
+ /**
+  * Any trailing text, without its leading colon (:). The trailing text
+  * is all the text from the first parameter which starts with a colon 
+  * up to the end of the line, or if there is no colon-prefixed parameter,
+  * the last paramter. 
+  */
+ String trailing;
+ 
+ /**
+  * Parses a line from the server into a [Command] object.
+  */
+ Command(String line) {
+   this.line = line;
+   
+   var bits = line.split(" ");
+   var bit = 0;
+   var charIndex = 0;
+   if (line.startsWith(":")) {
+     prefix = bits[bit].substring(1);
+     bit++;
+     charIndex += prefix.length + 1;
+   }
+   
+   if (bits.length &gt; bit) {
+     command = bits[bit];
+     charIndex += command.length + 1;
+     
+     params = bits.sublist(bit + 1);
+     
+     if (params.length &gt; 0) {
+       var startOfTrailing = line.indexOf(" :", charIndex);
+       if (startOfTrailing != -1) {
+         trailing = line.substring(startOfTrailing + 2);
+       } else {
+         trailing = params[params.length - 1];
+       }
+     }
+   }
+ }
+ 
+ /**
+  * Returns the command number or, if the command was not numberic,
+  * returns -1.
+  */
+ int get commandNumber {
+   try {
+     return int.parse(command);
+   } on FormatException catch (e) {
+     return -1;
+   }
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="Command">
+<button class="show-code">Code</button>
+new <strong>Command</strong>(String line) <a class="anchor-link" href="#Command"
+              title="Permalink to Command.Command">#</a></h4>
+<div class="doc">
+<p>Parses a line from the server into a <a class="crossref" href="../irc_client/Command.html#Command">Command</a> object.</p>
+<pre class="source">
+Command(String line) {
+ this.line = line;
+ 
+ var bits = line.split(" ");
+ var bit = 0;
+ var charIndex = 0;
+ if (line.startsWith(":")) {
+   prefix = bits[bit].substring(1);
+   bit++;
+   charIndex += prefix.length + 1;
+ }
+ 
+ if (bits.length &gt; bit) {
+   command = bits[bit];
+   charIndex += command.length + 1;
+   
+   params = bits.sublist(bit + 1);
+   
+   if (params.length &gt; 0) {
+     var startOfTrailing = line.indexOf(" :", charIndex);
+     if (startOfTrailing != -1) {
+       trailing = line.substring(startOfTrailing + 2);
+     } else {
+       trailing = params[params.length - 1];
+     }
+   }
+ }
+}
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="command">
+<button class="show-code">Code</button>
+String         <strong>command</strong> <a class="anchor-link"
+            href="#command"
+            title="Permalink to Command.command">#</a>
+        </h4>
+        <div class="doc">
+<p>The command.</p>
+<pre class="source">
+String command
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="commandNumber">
+<button class="show-code">Code</button>
+final int         <strong>commandNumber</strong> <a class="anchor-link"
+            href="#commandNumber"
+            title="Permalink to Command.commandNumber">#</a>
+        </h4>
+        <div class="doc">
+<p>Returns the command number or, if the command was not numberic,
+returns -1.</p>
+<pre class="source">
+int get commandNumber {
+ try {
+   return int.parse(command);
+ } on FormatException catch (e) {
+   return -1;
+ }
+}
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="line">
+<button class="show-code">Code</button>
+String         <strong>line</strong> <a class="anchor-link"
+            href="#line"
+            title="Permalink to Command.line">#</a>
+        </h4>
+        <div class="doc">
+<p>Contains the original line received from the server.</p>
+<pre class="source">
+String line
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="params">
+<button class="show-code">Code</button>
+List&lt;String&gt;         <strong>params</strong> <a class="anchor-link"
+            href="#params"
+            title="Permalink to Command.params">#</a>
+        </h4>
+        <div class="doc">
+<p>A list of the parameters, including the trailing parameters.</p>
+<pre class="source">
+List&lt;String&gt; params
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="prefix">
+<button class="show-code">Code</button>
+String         <strong>prefix</strong> <a class="anchor-link"
+            href="#prefix"
+            title="Permalink to Command.prefix">#</a>
+        </h4>
+        <div class="doc">
+<p>The prefix without the leading colon (:), or null if there was not one.</p>
+<pre class="source">
+String prefix
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="trailing">
+<button class="show-code">Code</button>
+String         <strong>trailing</strong> <a class="anchor-link"
+            href="#trailing"
+            title="Permalink to Command.trailing">#</a>
+        </h4>
+        <div class="doc">
+<p>Any trailing text, without its leading colon (:). The trailing text
+is all the text from the first parameter which starts with a colon 
+up to the end of the line, or if there is no colon-prefixed parameter,
+the last paramter. </p>
+<pre class="source">
+String trailing
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-13 21:24:30.697</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

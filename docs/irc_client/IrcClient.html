@@ -1,0 +1,291 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>IrcClient class / irc_client Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="irc_client" data-type="IrcClient">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../irc_client.html">irc_client</a> &rsaquo; <a href="../irc_client/IrcClient.html">IrcClient</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>IrcClient</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>A very simple IRC client, which connects to an IRC server and then
+calls methods on the supplied <a class="crossref" href="../irc_client/IrcClient.html#handlers">handlers</a> when commands are received.</p>
+<p>An example IRC bot:</p>
+<pre><code>import 'packages:irc_client/irc_client.dart';
+
+class BotHandler extends Handler {
+  bool onChannelMessage(String channel, String message, Irc irc) {
+    if (message.toLowerCase().contains("hello")) {
+    irc.sendMessage(channel, "Hey!");#
+  }
+}
+
+main() {
+  var bot = new IrcClient("bottymcbot");
+  bot.handlers.add(new BotHandler());
+  bot.run("irc.freenode.net");
+}
+
+</code></pre>
+<pre class="source">
+class IrcClient {
+ String nick;
+ String realName;
+ List&lt;Handler&gt; _handlers;
+ 
+ /**
+  * Create an IrcClient which will connect with the given [nick].
+  */
+ IrcClient(this.nick) {
+   _handlers = new List&lt;Handler&gt;();
+   realName = "Robbe";
+ }
+ 
+ /**
+  * Methods on [handlers] are called when commands are received from
+  * the server. 
+  */
+ List&lt;Handler&gt; get handlers =&gt; _handlers;
+ 
+ /**
+  * Call this to cause the [onConnection] methods of the [handlers] get
+  * called. This is usually not necessary, as the IrcClient or
+  * NickServHandler calls this when appropriate anyway.
+  */
+ connected(Irc irc) {
+   for (var handler in handlers) {
+     if (handler.onConnection(irc)) {
+       break;
+     }
+   }
+ }
+ 
+ /**
+  * Connects to the [server] on the given [port].
+  * 
+  * Currently there is no error handling, or handling of closed connections.
+  */
+ run(String server, [int port = 6667]) {
+   Socket.connect(server, port).then((socket) {
+     var stream = socket
+         .transform(new StringDecoder())
+         .transform(new LineTransformer())
+         .transform(new IrcTransformer());
+     
+     var irc = new Irc._internal(this, socket);
+     
+     irc.setNick(nick);
+     irc.write("${Commands.USER} ${nick} 0 * :${realName}");
+     
+     stream.listen((cmd) {
+       print("&lt;&lt;${cmd.line}");
+       var handled = false;
+       for (var handler in _handlers) {
+         handled = handler.onCommand(cmd, irc);
+         if (handled) {
+           break;
+         }
+       }
+       if (!handled) {
+         if (cmd.commandNumber == Replies.END_OF_MOTD) {
+           connected(irc);
+         }
+         if (cmd.command == Commands.PRIVMSG &amp;&amp; cmd.params[0].startsWith("#")) {
+           for (var handler in _handlers) {
+             if (handler.onChannelMessage(cmd.params[0], cmd.trailing, irc)) {
+               break;
+             }
+           }
+         }
+         if (cmd.command == Commands.PRIVMSG &amp;&amp; cmd.params[0] == nick) {
+           var user = cmd.prefix.substring(0, cmd.prefix.indexOf("!"));
+           for (var handler in _handlers) {
+             if (handler.onPrivateMessage(user, cmd.trailing, irc)) {
+               break;
+             }
+           }
+         }
+         if (cmd.command == Commands.PING) {
+           irc.write("${Commands.PONG} thisserver ${cmd.params[0]}");
+         }
+       }
+     });
+   });
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="IrcClient">
+<button class="show-code">Code</button>
+new <strong>IrcClient</strong>(String nick) <a class="anchor-link" href="#IrcClient"
+              title="Permalink to IrcClient.IrcClient">#</a></h4>
+<div class="doc">
+<p>Create an IrcClient which will connect with the given 
+<span class="param">nick</span>.</p>
+<pre class="source">
+IrcClient(this.nick) {
+ _handlers = new List&lt;Handler&gt;();
+ realName = "Robbe";
+}
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="handlers">
+<button class="show-code">Code</button>
+final List&lt;<a href="../irc_client/Handler.html">Handler</a>&gt;         <strong>handlers</strong> <a class="anchor-link"
+            href="#handlers"
+            title="Permalink to IrcClient.handlers">#</a>
+        </h4>
+        <div class="doc">
+<p>Methods on <a class="crossref" href="../irc_client/IrcClient.html#handlers">handlers</a> are called when commands are received from
+the server. </p>
+<pre class="source">
+List&lt;Handler&gt; get handlers =&gt; _handlers;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="nick">
+<button class="show-code">Code</button>
+String         <strong>nick</strong> <a class="anchor-link"
+            href="#nick"
+            title="Permalink to IrcClient.nick">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String nick
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="realName">
+<button class="show-code">Code</button>
+String         <strong>realName</strong> <a class="anchor-link"
+            href="#realName"
+            title="Permalink to IrcClient.realName">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String realName
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="connected">
+<button class="show-code">Code</button>
+dynamic<strong>connected</strong>(<a href="../irc_client/Irc.html">Irc</a> irc) <a class="anchor-link" href="#connected"
+              title="Permalink to IrcClient.connected">#</a></h4>
+<div class="doc">
+<p>Call this to cause the <code>onConnection</code> methods of the <a class="crossref" href="../irc_client/IrcClient.html#handlers">handlers</a> get
+called. This is usually not necessary, as the IrcClient or
+NickServHandler calls this when appropriate anyway.</p>
+<pre class="source">
+connected(Irc irc) {
+ for (var handler in handlers) {
+   if (handler.onConnection(irc)) {
+     break;
+   }
+ }
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="run">
+<button class="show-code">Code</button>
+dynamic<strong>run</strong>(String server, [int port = 6667]) <a class="anchor-link" href="#run"
+              title="Permalink to IrcClient.run">#</a></h4>
+<div class="doc">
+<p>Connects to the 
+<span class="param">server</span> on the given 
+<span class="param">port</span>.</p>
+<p>Currently there is no error handling, or handling of closed connections.</p>
+<pre class="source">
+run(String server, [int port = 6667]) {
+ Socket.connect(server, port).then((socket) {
+   var stream = socket
+       .transform(new StringDecoder())
+       .transform(new LineTransformer())
+       .transform(new IrcTransformer());
+   
+   var irc = new Irc._internal(this, socket);
+   
+   irc.setNick(nick);
+   irc.write("${Commands.USER} ${nick} 0 * :${realName}");
+   
+   stream.listen((cmd) {
+     print("&lt;&lt;${cmd.line}");
+     var handled = false;
+     for (var handler in _handlers) {
+       handled = handler.onCommand(cmd, irc);
+       if (handled) {
+         break;
+       }
+     }
+     if (!handled) {
+       if (cmd.commandNumber == Replies.END_OF_MOTD) {
+         connected(irc);
+       }
+       if (cmd.command == Commands.PRIVMSG &amp;&amp; cmd.params[0].startsWith("#")) {
+         for (var handler in _handlers) {
+           if (handler.onChannelMessage(cmd.params[0], cmd.trailing, irc)) {
+             break;
+           }
+         }
+       }
+       if (cmd.command == Commands.PRIVMSG &amp;&amp; cmd.params[0] == nick) {
+         var user = cmd.prefix.substring(0, cmd.prefix.indexOf("!"));
+         for (var handler in _handlers) {
+           if (handler.onPrivateMessage(user, cmd.trailing, irc)) {
+             break;
+           }
+         }
+       }
+       if (cmd.command == Commands.PING) {
+         irc.write("${Commands.PONG} thisserver ${cmd.params[0]}");
+       }
+     }
+   });
+ });
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-13 21:24:30.750</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

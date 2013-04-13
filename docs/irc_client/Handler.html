@@ -1,0 +1,147 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Handler class / irc_client Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="irc_client" data-type="Handler">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../irc_client.html">irc_client</a> &rsaquo; <a href="../irc_client/Handler.html">Handler</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Handler</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>Extend <a class="crossref" href="../irc_client/Handler.html">Handler</a> to handle commands which are received from the IRC server. </p>
+<pre class="source">
+class Handler {
+ /**
+  * Called every time a command is received from the server. No more onCommand
+  * handlers will be called if this one returns [true].
+  */
+ bool onCommand(Command cmd, Irc irc) {
+   return false;
+ }
+ 
+ /**
+  * Called every time a channel message is received from the server. Channel
+  * messages are identified by the [channel] name starting with a hash (#).
+  * No more onChannelMessage handlers will be called if this one returns [true].
+  */
+ bool onChannelMessage(String channel, String message, Irc irc) {
+   return false;    
+ }
+ 
+ /**
+  * Called every time a private message is received from the server, addressed
+  * to the current nick. No more onPrivateMessage handlers will be called if 
+  * this one returns [true].
+  */
+ bool onPrivateMessage(String nick, String message, Irc irc) {
+   return false;
+ }
+ 
+ /**
+  * Called after the client has finished connecting to the IRC server.
+  * No more onConnection handlers will be called if this one returns [true].
+  */
+ bool onConnection(Irc irc) {
+   return false;
+ }
+}
+</pre>
+</div>
+<h3>Subclasses</h3>
+<p>
+<span class="type-box"><span class="icon-class"></span><a href="../irc_client/NickServHandler.html">NickServHandler</a></span></p>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="onChannelMessage">
+<button class="show-code">Code</button>
+bool <strong>onChannelMessage</strong>(String channel, String message, <a href="../irc_client/Irc.html">Irc</a> irc) <a class="anchor-link" href="#onChannelMessage"
+              title="Permalink to Handler.onChannelMessage">#</a></h4>
+<div class="doc">
+<p>Called every time a channel message is received from the server. Channel
+messages are identified by the 
+<span class="param">channel</span> name starting with a hash (#).
+No more onChannelMessage handlers will be called if this one returns <code>true</code>.</p>
+<pre class="source">
+bool onChannelMessage(String channel, String message, Irc irc) {
+ return false;    
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onCommand">
+<button class="show-code">Code</button>
+bool <strong>onCommand</strong>(<a href="../irc_client/Command.html">Command</a> cmd, <a href="../irc_client/Irc.html">Irc</a> irc) <a class="anchor-link" href="#onCommand"
+              title="Permalink to Handler.onCommand">#</a></h4>
+<div class="doc">
+<p>Called every time a command is received from the server. No more onCommand
+handlers will be called if this one returns <code>true</code>.</p>
+<pre class="source">
+bool onCommand(Command cmd, Irc irc) {
+ return false;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onConnection">
+<button class="show-code">Code</button>
+bool <strong>onConnection</strong>(<a href="../irc_client/Irc.html">Irc</a> irc) <a class="anchor-link" href="#onConnection"
+              title="Permalink to Handler.onConnection">#</a></h4>
+<div class="doc">
+<p>Called after the client has finished connecting to the IRC server.
+No more onConnection handlers will be called if this one returns <code>true</code>.</p>
+<pre class="source">
+bool onConnection(Irc irc) {
+ return false;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onPrivateMessage">
+<button class="show-code">Code</button>
+bool <strong>onPrivateMessage</strong>(String nick, String message, <a href="../irc_client/Irc.html">Irc</a> irc) <a class="anchor-link" href="#onPrivateMessage"
+              title="Permalink to Handler.onPrivateMessage">#</a></h4>
+<div class="doc">
+<p>Called every time a private message is received from the server, addressed
+to the current nick. No more onPrivateMessage handlers will be called if 
+this one returns <code>true</code>.</p>
+<pre class="source">
+bool onPrivateMessage(String nick, String message, Irc irc) {
+ return false;
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-13 21:24:30.683</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

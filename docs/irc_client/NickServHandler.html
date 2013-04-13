@@ -1,0 +1,236 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>NickServHandler class / irc_client Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="irc_client" data-type="NickServHandler">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../irc_client.html">irc_client</a> &rsaquo; <a href="../irc_client/NickServHandler.html">NickServHandler</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>NickServHandler</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>A handler which identifies with NickServ, and if another user is
+connected with our nick, ghosts them so that we can connect.</p>
+<p>This must be added to the IrcClient as the first handler. For example:</p>
+<pre><code>var bot = new IrcClient("bottymcbot");
+bot.realName = "Mr Bot";
+bot.handlers.add(new NickServHandler("wibble"));
+bot.handlers.add(new MyHandler());
+bot.run("irc.freenode.net", 6667);
+</code></pre>
+<p>When this handler is in use, subsequent handlers' <a class="crossref" href="../irc_client/NickServHandler.html#onConnection">onConnection</a>
+methods will not be called until this has succesfully identified
+itself.</p>
+<p>This has been tested against freenode. If the implementation of
+NickServ returns messages in a different format, this will not
+work. </p>
+<pre class="source">
+class NickServHandler extends Handler {
+ String _originalNick;
+ String nickservPassword;
+ bool _connected = false;
+ bool _first = true;
+ 
+ NickServHandler(this.nickservPassword);
+ 
+ _identify(Irc irc) {
+   irc.sendMessage("nickserv", "identify ${_originalNick} ${nickservPassword}");    
+ }
+ 
+ bool onCommand(Command cmd, Irc irc) {
+   if (_first) {
+     _originalNick = irc.nick;
+     _identify(irc);
+     _first = false;
+   }
+   if (cmd.commandNumber == Errors.NICKNAME_IN_USE) {
+     var inUseNick = cmd.params[1];
+     if (inUseNick == irc.nick) {
+       var newNick = "${irc.nick}_";
+       irc.setNick(newNick);
+       irc.sendMessage("nickserv", "ghost ${_originalNick} ${nickservPassword}");
+     }
+     return true;
+   }
+   if (cmd.command == Commands.NOTICE &amp;&amp; cmd.params[0] == irc.nick 
+       &amp;&amp; cmd.trailing.contains("has been ghosted")) {
+     irc.setNick(_originalNick);
+     _identify(irc);
+     return true;
+   }
+   if (cmd.command == Commands.NOTICE &amp;&amp; cmd.params[0] == irc.nick 
+       &amp;&amp; cmd.trailing.contains("You are now identified for")) {
+     _connected = true;
+     irc._client.connected(irc);
+     return true;
+   }
+   return false;
+ }
+ 
+ bool onConnection(Irc irc) {
+   if (!_connected) {
+     return true;
+   }
+   return false;
+ }
+}
+</pre>
+</div>
+<h3>Extends</h3>
+<p>
+<span class="type-box"><span class="icon-class"></span><a href="../irc_client/Handler.html">Handler</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><strong>NickServHandler</strong></span></p>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="NickServHandler">
+<button class="show-code">Code</button>
+new <strong>NickServHandler</strong>(String nickservPassword) <a class="anchor-link" href="#NickServHandler"
+              title="Permalink to NickServHandler.NickServHandler">#</a></h4>
+<div class="doc">
+<pre class="source">
+NickServHandler(this.nickservPassword);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="nickservPassword">
+<button class="show-code">Code</button>
+String         <strong>nickservPassword</strong> <a class="anchor-link"
+            href="#nickservPassword"
+            title="Permalink to NickServHandler.nickservPassword">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String nickservPassword
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method inherited"><h4 id="onChannelMessage">
+<button class="show-code">Code</button>
+bool <strong>onChannelMessage</strong>(String channel, String message, <a href="../irc_client/Irc.html">Irc</a> irc) <a class="anchor-link" href="#onChannelMessage"
+              title="Permalink to NickServHandler.onChannelMessage">#</a></h4>
+<div class="inherited-from">inherited from <a href="../irc_client/Handler.html">Handler</a> </div><div class="doc">
+<p>Called every time a channel message is received from the server. Channel
+messages are identified by the 
+<span class="param">channel</span> name starting with a hash (#).
+No more onChannelMessage handlers will be called if this one returns <code>true</code>.</p>
+<pre class="source">
+bool onChannelMessage(String channel, String message, Irc irc) {
+ return false;    
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onCommand">
+<button class="show-code">Code</button>
+bool <strong>onCommand</strong>(<a href="../irc_client/Command.html">Command</a> cmd, <a href="../irc_client/Irc.html">Irc</a> irc) <a class="anchor-link" href="#onCommand"
+              title="Permalink to NickServHandler.onCommand">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Called every time a command is received from the server. No more onCommand
+handlers will be called if this one returns <code>true</code>.</p>
+<div class="docs-inherited-from">docs inherited from <a href="../irc_client/Handler.html">Handler</a> </div></div>
+<pre class="source">
+bool onCommand(Command cmd, Irc irc) {
+ if (_first) {
+   _originalNick = irc.nick;
+   _identify(irc);
+   _first = false;
+ }
+ if (cmd.commandNumber == Errors.NICKNAME_IN_USE) {
+   var inUseNick = cmd.params[1];
+   if (inUseNick == irc.nick) {
+     var newNick = "${irc.nick}_";
+     irc.setNick(newNick);
+     irc.sendMessage("nickserv", "ghost ${_originalNick} ${nickservPassword}");
+   }
+   return true;
+ }
+ if (cmd.command == Commands.NOTICE &amp;&amp; cmd.params[0] == irc.nick 
+     &amp;&amp; cmd.trailing.contains("has been ghosted")) {
+   irc.setNick(_originalNick);
+   _identify(irc);
+   return true;
+ }
+ if (cmd.command == Commands.NOTICE &amp;&amp; cmd.params[0] == irc.nick 
+     &amp;&amp; cmd.trailing.contains("You are now identified for")) {
+   _connected = true;
+   irc._client.connected(irc);
+   return true;
+ }
+ return false;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onConnection">
+<button class="show-code">Code</button>
+bool <strong>onConnection</strong>(<a href="../irc_client/Irc.html">Irc</a> irc) <a class="anchor-link" href="#onConnection"
+              title="Permalink to NickServHandler.onConnection">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Called after the client has finished connecting to the IRC server.
+No more onConnection handlers will be called if this one returns <code>true</code>.</p>
+<div class="docs-inherited-from">docs inherited from <a href="../irc_client/Handler.html">Handler</a> </div></div>
+<pre class="source">
+bool onConnection(Irc irc) {
+ if (!_connected) {
+   return true;
+ }
+ return false;
+}
+</pre>
+</div>
+</div>
+<div class="method inherited"><h4 id="onPrivateMessage">
+<button class="show-code">Code</button>
+bool <strong>onPrivateMessage</strong>(String nick, String message, <a href="../irc_client/Irc.html">Irc</a> irc) <a class="anchor-link" href="#onPrivateMessage"
+              title="Permalink to NickServHandler.onPrivateMessage">#</a></h4>
+<div class="inherited-from">inherited from <a href="../irc_client/Handler.html">Handler</a> </div><div class="doc">
+<p>Called every time a private message is received from the server, addressed
+to the current nick. No more onPrivateMessage handlers will be called if 
+this one returns <code>true</code>.</p>
+<pre class="source">
+bool onPrivateMessage(String nick, String message, Irc irc) {
+ return false;
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-13 21:24:30.490</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

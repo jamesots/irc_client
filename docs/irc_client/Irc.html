@@ -1,0 +1,192 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Irc class / irc_client Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="irc_client" data-type="Irc">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../irc_client.html">irc_client</a> &rsaquo; <a href="../irc_client/Irc.html">Irc</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Irc</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>The <a class="crossref" href="../irc_client/Irc.html">Irc</a> object is passed to methods on the <a class="crossref" href="../irc_client/Handler.html">Handler</a>s, so that they
+can send commands back to the IRC server.</p>
+<pre class="source">
+class Irc {
+ IrcClient _client;
+ Socket _socket;
+ String _nick;
+ 
+ Irc._internal(this._client, this._socket);
+ 
+ /**
+  * Returns the current nickname
+  */
+ String get nick =&gt; _nick;
+
+ /**
+  * Writes the [message] to the irc server. (Currently also writes it to
+  * the console, but will eventually replace with with a logger).
+  */
+ void write(String message) {
+   print("&gt;&gt;${message}"); //TODO: use a logger
+   _socket.writeln(message);
+ }
+ 
+ /**
+  * Sends a private [message] to the [nickOrChannel]. 
+  */
+ void sendMessage(String nickOrChannel, String message) {
+   write("${Commands.PRIVMSG} ${nickOrChannel} :${message}");
+ }
+ 
+ /**
+  * Sends a [notice] to the [user].
+  */
+ void sendNotice(String user, String notice) {
+   write("${Commands.NOTICE} ${user} :${notice}");
+ }
+ 
+ /**
+  * Joins a [channel].
+  */
+ void join(String channel) {
+   write("${Commands.JOIN} ${channel}");
+ }
+ 
+ /**
+  * Sets the current [nick].
+  */
+ void setNick(String nick) {
+   _nick = nick;
+   write("${Commands.NICK} ${nick}");
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="nick">
+<button class="show-code">Code</button>
+final String         <strong>nick</strong> <a class="anchor-link"
+            href="#nick"
+            title="Permalink to Irc.nick">#</a>
+        </h4>
+        <div class="doc">
+<p>Returns the current nickname</p>
+<pre class="source">
+String get nick =&gt; _nick;
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="join">
+<button class="show-code">Code</button>
+void <strong>join</strong>(String channel) <a class="anchor-link" href="#join"
+              title="Permalink to Irc.join">#</a></h4>
+<div class="doc">
+<p>Joins a 
+<span class="param">channel</span>.</p>
+<pre class="source">
+void join(String channel) {
+ write("${Commands.JOIN} ${channel}");
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="sendMessage">
+<button class="show-code">Code</button>
+void <strong>sendMessage</strong>(String nickOrChannel, String message) <a class="anchor-link" href="#sendMessage"
+              title="Permalink to Irc.sendMessage">#</a></h4>
+<div class="doc">
+<p>Sends a private 
+<span class="param">message</span> to the 
+<span class="param">nickOrChannel</span>. </p>
+<pre class="source">
+void sendMessage(String nickOrChannel, String message) {
+ write("${Commands.PRIVMSG} ${nickOrChannel} :${message}");
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="sendNotice">
+<button class="show-code">Code</button>
+void <strong>sendNotice</strong>(String user, String notice) <a class="anchor-link" href="#sendNotice"
+              title="Permalink to Irc.sendNotice">#</a></h4>
+<div class="doc">
+<p>Sends a 
+<span class="param">notice</span> to the 
+<span class="param">user</span>.</p>
+<pre class="source">
+void sendNotice(String user, String notice) {
+ write("${Commands.NOTICE} ${user} :${notice}");
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="setNick">
+<button class="show-code">Code</button>
+void <strong>setNick</strong>(String nick) <a class="anchor-link" href="#setNick"
+              title="Permalink to Irc.setNick">#</a></h4>
+<div class="doc">
+<p>Sets the current 
+<span class="param">nick</span>.</p>
+<pre class="source">
+void setNick(String nick) {
+ _nick = nick;
+ write("${Commands.NICK} ${nick}");
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="write">
+<button class="show-code">Code</button>
+void <strong>write</strong>(String message) <a class="anchor-link" href="#write"
+              title="Permalink to Irc.write">#</a></h4>
+<div class="doc">
+<p>Writes the 
+<span class="param">message</span> to the irc server. (Currently also writes it to
+the console, but will eventually replace with with a logger).</p>
+<pre class="source">
+void write(String message) {
+ print("&gt;&gt;${message}"); //TODO: use a logger
+ _socket.writeln(message);
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-13 21:24:30.707</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

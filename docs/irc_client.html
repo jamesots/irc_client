@@ -1,0 +1,113 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>irc_client Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="favicon.ico">
+        
+        </head>
+        <body data-library="irc_client">
+        <div class="page">
+        <div class="header">
+          <a href="index.html"><div class="logo"></div></a>
+          <a href="index.html">Dart Documentation</a>
+         &rsaquo; <a href="irc_client.html">irc_client</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+<h2><strong>irc_client</strong> library</h2>
+<div class="doc"><p>This library lets you connect to an IRC server.</p>
+<p>A very basic IRC bot:</p>
+<pre><code>import 'packages:irc_client/irc_client.dart';
+
+class BotHandler extends Handler {
+  bool onChannelMessage(String channel, String message, Irc irc) {
+    if (message.toLowerCase().contains("hello")) {
+    irc.sendMessage(channel, "Hey!");#
+  }
+}
+
+main() {
+  var bot = new IrcClient("bottymcbot");
+  bot.handlers.add(new BotHandler());
+  bot.run("irc.freenode.net");
+}
+</code></pre>
+<p>There is a more complex example in example/example.dart</p></div>
+<div>
+<h3>Classes</h3>
+          <div class="type">
+          <h4>
+            <a href="irc_client/Command.html"><strong>Command</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="irc_client/Commands.html"><strong>Commands</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="irc_client/Errors.html"><strong>Errors</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="irc_client/Handler.html"><strong>Handler</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="irc_client/Irc.html"><strong>Irc</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="irc_client/IrcClient.html"><strong>IrcClient</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="irc_client/IrcTransformer.html"><strong>IrcTransformer</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="irc_client/NickServHandler.html"><strong>NickServHandler</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="irc_client/Replies.html"><strong>Replies</strong></a>
+          </h4>
+          </div>
+          
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-04-13 21:24:30.419</div>
+        </div>
+        <script async src="client-live-nav.js"></script>
+        </body></html>
+        
