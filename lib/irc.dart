@@ -5,27 +5,46 @@ class Irc {
   Socket _socket;
   String _nick;
   
-  Irc(this._client, this._socket);
+  Irc._internal(this._client, this._socket);
   
+  /**
+   * Returns the current nickname
+   */
   String get nick => _nick;
 
-  write(String msg) {
-    print(">>${msg}");
-    _socket.writeln(msg);
+  /**
+   * Writes the [message] to the irc server. (Currently also writes it to
+   * the console, but will eventually replace with with a logger).
+   */
+  write(String message) {
+    print(">>${message}"); //TODO: use a logger
+    _socket.writeln(message);
   }
   
-  sendMessage(String to, String msg) {
-    write("${Commands.PRIVMSG} ${to} :${msg}");
+  /**
+   * Sends a private [message] to the [nickOrChannel]. 
+   */
+  sendMessage(String nickOrChannel, String message) {
+    write("${Commands.PRIVMSG} ${nickOrChannel} :${message}");
   }
   
-  sendNotice(String to, String msg) {
-    write("${Commands.NOTICE} ${to} :${msg}");
+  /**
+   * Sends a [notice] to the [user].
+   */
+  sendNotice(String user, String notice) {
+    write("${Commands.NOTICE} ${user} :${notice}");
   }
   
+  /**
+   * Joins a [channel].
+   */
   join(String channel) {
     write("${Commands.JOIN} ${channel}");
   }
   
+  /**
+   * Sets the current [nick].
+   */
   setNick(String nick) {
     _nick = nick;
     write("${Commands.NICK} ${nick}");

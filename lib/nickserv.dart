@@ -1,5 +1,19 @@
 part of irc_client;
 
+/**
+ * A handler which identifies with NickServ, and if another user is
+ * connected with our nick, ghosts them so that we can connect.
+ * 
+ * This must be added to the IrcClient as the first handler.
+ * 
+ * When this handler is in use, subsequent handlers' [onConnection]
+ * methods will not be called until this has succesfully identified
+ * itself.
+ * 
+ * This has been tested against freenode. If the implementation of
+ * NickServ returns messages in a different format, this will not
+ * work. 
+ */
 class NickServHandler extends Handler {
   String nick;
   String nickservPassword;

@@ -1,12 +1,37 @@
 part of irc_client;
 
 class Command {
+  /**
+   * The prefix without the leading colon (:), or null if there was not one.
+   */
   String prefix;
+  
+  /**
+   * The command.
+   */
   String command;
+  
+  /**
+   * A list of the parameters, including the trailing parameters.
+   */
   List<String> params;
+  
+  /**
+   * Contains the original line received from the server.
+   */
   String line;
+  
+  /**
+   * Any trailing text, without its leading colon (:). The trailing text
+   * is all the text from the first parameter which starts with a colon 
+   * up to the end of the line, or if there is no colon-prefixed parameter,
+   * the last paramter. 
+   */
   String trailing;
   
+  /**
+   * Parses a line from the server into a [Command] object.
+   */
   Command(String line) {
     this.line = line;
     
@@ -36,6 +61,10 @@ class Command {
     }
   }
   
+  /**
+   * Returns the command number or, if the command was not numberic,
+   * returns -1.
+   */
   int get commandNumber {
     try {
       return int.parse(command);

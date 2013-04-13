@@ -8,26 +8,36 @@ part 'irc.dart';
 part 'command.dart';
 part 'handler.dart';
 part 'nickserv.dart';
+part 'transformer.dart';
 
-class IrcTransformer extends StreamEventTransformer<String, Command> {
-  void handleData(String event, EventSink<Command> sink) {
-    var command = new Command(event);
-    sink.add(command);
-  }
-}
-
+/**
+ * A very simple IRC client, which connects to an IRC server and then
+ * calls methods on the supplied [handlers] when commands are received.
+ */
 class IrcClient {
   String nick;
   String realName;
   List<Handler> _handlers;
   
+  /**
+   * Create an IrcClient which will connect with the given [nick].
+   */
   IrcClient(this.nick) {
     _handlers = new List<Handler>();
     realName = "Robbe";
   }
   
+  /**
+   * Methods on [handlers] are called when commands are received from
+   * the server. 
+   */
   List<Handler> get handlers => _handlers;
   
+  /**
+   * Call this to cause the [onConnection] methods of the [handlers] get
+   * called. This is usually not necessary, as the IrcClient or
+   * NickServHandler calls this when appropriate anyway.
+   */
   connected(Irc irc) {
     for (var handler in handlers) {
       if (handler.onConnection(irc)) {
@@ -36,6 +46,11 @@ class IrcClient {
     }
   }
   
+  /**
+   * Connects to the [server] on the given [port].
+   * 
+   * Currently there is no error handling, or handling of closed connections.
+   */
   run(String server, int port) {
     Socket.connect(server, port).then((socket) {
       var stream = socket
@@ -43,7 +58,7 @@ class IrcClient {
           .transform(new LineTransformer())
           .transform(new IrcTransformer());
       
-      var irc = new Irc(this, socket);
+      var irc = new Irc._internal(this, socket);
       
       irc.setNick(nick);
       irc.write("${Commands.USER} ${nick} 0 * :${realName}");
