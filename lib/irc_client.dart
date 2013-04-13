@@ -86,6 +86,15 @@ class IrcClient {
     }
   }
   
+  bool _isChannel(String possibleChannel) {
+    if (possibleChannel.length < 2) {
+      return false;
+    }
+    var firstChar = possibleChannel[0];
+    return firstChar == '#' || firstChar == '&' || firstChar == '+'
+        || firstChar == '!';
+  }
+  
   /**
    * Connects to the [server] on the given [port].
    * 
@@ -116,7 +125,7 @@ class IrcClient {
           if (cmd.commandNumber == Replies.END_OF_MOTD) {
             connected(irc);
           }
-          if (cmd.command == Commands.PRIVMSG && cmd.params[0].startsWith("#")) {
+          if (cmd.command == Commands.PRIVMSG && _isChannel(cmd.params[0])) {
             for (var handler in _handlers) {
               if (handler.onChannelMessage(cmd.params[0], cmd.trailing, irc)) {
                 break;

@@ -13,8 +13,7 @@ class Handler {
   }
   
   /**
-   * Called every time a channel message is received from the server. Channel
-   * messages are identified by the [channel] name starting with a hash (#).
+   * Called every time a channel message is received from the server. 
    * No more onChannelMessage handlers will be called if this one returns [true].
    */
   bool onChannelMessage(String channel, String message, Irc irc) {
