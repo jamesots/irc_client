@@ -1,5 +1,9 @@
 part of irc_client;
 
+/**
+ * The [Irc] object is passed to methods on the [Handler]s, so that they
+ * can send commands back to the IRC server.
+ */
 class Irc {
   IrcClient _client;
   Socket _socket;
@@ -16,7 +20,7 @@ class Irc {
    * Writes the [message] to the irc server. (Currently also writes it to
    * the console, but will eventually replace with with a logger).
    */
-  write(String message) {
+  void write(String message) {
     print(">>${message}"); //TODO: use a logger
     _socket.writeln(message);
   }
@@ -24,32 +28,29 @@ class Irc {
   /**
    * Sends a private [message] to the [nickOrChannel]. 
    */
-  sendMessage(String nickOrChannel, String message) {
+  void sendMessage(String nickOrChannel, String message) {
     write("${Commands.PRIVMSG} ${nickOrChannel} :${message}");
   }
   
   /**
    * Sends a [notice] to the [user].
    */
-  sendNotice(String user, String notice) {
+  void sendNotice(String user, String notice) {
     write("${Commands.NOTICE} ${user} :${notice}");
   }
   
   /**
    * Joins a [channel].
    */
-  join(String channel) {
+  void join(String channel) {
     write("${Commands.JOIN} ${channel}");
   }
   
   /**
    * Sets the current [nick].
    */
-  setNick(String nick) {
+  void setNick(String nick) {
     _nick = nick;
     write("${Commands.NICK} ${nick}");
   }
 }
-
-
-

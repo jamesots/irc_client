@@ -1,5 +1,8 @@
 part of irc_client;
 
+/**
+ * Extend [Handler] to handle commands which are received from the IRC server. 
+ */
 class Handler {
   /**
    * Called every time a command is received from the server. No more onCommand

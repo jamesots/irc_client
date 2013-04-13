@@ -1,3 +1,25 @@
+/**
+ * This library lets you connect to an IRC server.
+ * 
+ * A very basic IRC bot:
+ * 
+ *     import 'packages:irc_client/irc_client.dart';
+ *     
+ *     class BotHandler extends Handler {
+ *       bool onChannelMessage(String channel, String message, Irc irc) {
+ *         if (message.toLowerCase().contains("hello")) {
+ *         irc.sendMessage(channel, "Hey!");#
+ *       }
+ *     }
+ *     
+ *     main() {
+ *       var bot = new IrcClient("bottymcbot");
+ *       bot.handlers.add(new BotHandler());
+ *       bot.run("irc.freenode.net");
+ *     }
+ * 
+ * There is a more complex example in example/example.dart
+ */
 library irc_client;
 
 import 'dart:io';
@@ -13,6 +35,24 @@ part 'src/transformer.dart';
 /**
  * A very simple IRC client, which connects to an IRC server and then
  * calls methods on the supplied [handlers] when commands are received.
+ * 
+ * An example IRC bot:
+ * 
+ *     import 'packages:irc_client/irc_client.dart';
+ *     
+ *     class BotHandler extends Handler {
+ *       bool onChannelMessage(String channel, String message, Irc irc) {
+ *         if (message.toLowerCase().contains("hello")) {
+ *         irc.sendMessage(channel, "Hey!");#
+ *       }
+ *     }
+ *     
+ *     main() {
+ *       var bot = new IrcClient("bottymcbot");
+ *       bot.handlers.add(new BotHandler());
+ *       bot.run("irc.freenode.net");
+ *     }
+ *     
  */
 class IrcClient {
   String nick;
@@ -51,7 +91,7 @@ class IrcClient {
    * 
    * Currently there is no error handling, or handling of closed connections.
    */
-  run(String server, int port) {
+  run(String server, [int port = 6667]) {
     Socket.connect(server, port).then((socket) {
       var stream = socket
           .transform(new StringDecoder())

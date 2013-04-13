@@ -4,7 +4,13 @@ part of irc_client;
  * A handler which identifies with NickServ, and if another user is
  * connected with our nick, ghosts them so that we can connect.
  * 
- * This must be added to the IrcClient as the first handler.
+ * This must be added to the IrcClient as the first handler. For example:
+ * 
+ *     var bot = new IrcClient("bottymcbot");
+ *     bot.realName = "Mr Bot";
+ *     bot.handlers.add(new NickServHandler("wibble"));
+ *     bot.handlers.add(new MyHandler());
+ *     bot.run("irc.freenode.net", 6667);
  * 
  * When this handler is in use, subsequent handlers' [onConnection]
  * methods will not be called until this has succesfully identified
@@ -15,41 +21,41 @@ part of irc_client;
  * work. 
  */
 class NickServHandler extends Handler {
-  String nick;
+  String _originalNick;
   String nickservPassword;
-  bool connected = false;
-  bool first = true;
+  bool _connected = false;
+  bool _first = true;
   
   NickServHandler(this.nickservPassword);
   
   _identify(Irc irc) {
-    irc.sendMessage("nickserv", "identify ${nick} ${nickservPassword}");    
+    irc.sendMessage("nickserv", "identify ${_originalNick} ${nickservPassword}");    
   }
   
   bool onCommand(Command cmd, Irc irc) {
-    if (first) {
-      nick = irc.nick;
+    if (_first) {
+      _originalNick = irc.nick;
       _identify(irc);
-      first = false;
+      _first = false;
     }
     if (cmd.commandNumber == Errors.NICKNAME_IN_USE) {
       var inUseNick = cmd.params[1];
       if (inUseNick == irc.nick) {
         var newNick = "${irc.nick}_";
         irc.setNick(newNick);
-        irc.sendMessage("nickserv", "ghost ${nick} ${nickservPassword}");
+        irc.sendMessage("nickserv", "ghost ${_originalNick} ${nickservPassword}");
       }
       return true;
     }
     if (cmd.command == Commands.NOTICE && cmd.params[0] == irc.nick 
         && cmd.trailing.contains("has been ghosted")) {
-      irc.setNick(nick);
+      irc.setNick(_originalNick);
       _identify(irc);
       return true;
     }
     if (cmd.command == Commands.NOTICE && cmd.params[0] == irc.nick 
         && cmd.trailing.contains("You are now identified for")) {
-      connected = true;
+      _connected = true;
       irc._client.connected(irc);
       return true;
     }
@@ -57,7 +63,7 @@ class NickServHandler extends Handler {
   }
   
   bool onConnection(Irc irc) {
-    if (!connected) {
+    if (!_connected) {
       return true;
     }
     return false;

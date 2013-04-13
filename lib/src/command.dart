@@ -1,5 +1,8 @@
 part of irc_client;
 
+/**
+ * Contains a command which was received from the IRC server.
+ */
 class Command {
   /**
    * The prefix without the leading colon (:), or null if there was not one.
