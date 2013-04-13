@@ -9,6 +9,13 @@ part 'command.dart';
 part 'handler.dart';
 part 'nickserv.dart';
 
+class IrcTransformer extends StreamEventTransformer<String, Command> {
+  void handleData(String event, EventSink<Command> sink) {
+    var command = new Command(event);
+    sink.add(command);
+  }
+}
+
 class IrcClient {
   String nick;
   String realName;
@@ -31,16 +38,18 @@ class IrcClient {
   
   run(String server, int port) {
     Socket.connect(server, port).then((socket) {
-      var stream = socket.transform(new StringDecoder()).transform(new LineTransformer());
+      var stream = socket
+          .transform(new StringDecoder())
+          .transform(new LineTransformer())
+          .transform(new IrcTransformer());
       
       var irc = new Irc(this, socket);
       
       irc.setNick(nick);
       irc.write("${Commands.USER} ${nick} 0 * :${realName}");
       
-      stream.listen((line) {
-        print("<<${line}");
-        var cmd = new Command(line);
+      stream.listen((cmd) {
+        print("<<${cmd.line}");
         var handled = false;
         for (var handler in _handlers) {
           handled = handler.onCommand(cmd, irc);
