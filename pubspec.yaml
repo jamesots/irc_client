@@ -1,5 +1,5 @@
 name: irc_client
-version: 0.0.2
+version: 0.0.3
 author: James Ots <code@jamesots.com>
 description: IRC client library
 homepage: https://github.com/jamesots/irc_client
