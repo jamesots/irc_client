@@ -3,12 +3,12 @@ library irc_client;
 import 'dart:io';
 import 'dart:async';
 
-part 'constants.dart';
-part 'irc.dart';
-part 'command.dart';
-part 'handler.dart';
-part 'nickserv.dart';
-part 'transformer.dart';
+part 'src/constants.dart';
+part 'src/irc.dart';
+part 'src/command.dart';
+part 'src/handler.dart';
+part 'src/nickserv.dart';
+part 'src/transformer.dart';
 
 /**
  * A very simple IRC client, which connects to an IRC server and then
