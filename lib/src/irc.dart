@@ -7,7 +7,7 @@ part of irc_client;
 class Irc {
   Logger ioLog = new Logger("io");
   IrcClient _client;
-  Socket _socket;
+  StringSink _socket;
   String _nick;
   
   Irc._internal(this._client, this._socket);

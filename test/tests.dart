@@ -1,7 +1,17 @@
 library irc_client;
 
 import 'package:unittest/unittest.dart';
-import 'package:irc_client/irc_client.dart';
+import 'dart:io';
+import 'dart:async';
+import 'package:logging/logging.dart';
+
+part '../lib/src/constants.dart';
+part '../lib/src/irc.dart';
+part '../lib/src/command.dart';
+part '../lib/src/handler.dart';
+part '../lib/src/nickserv.dart';
+part '../lib/src/transformer.dart';
+part '../lib/src/client.dart';
 
 main() {
   group('Command', () {
@@ -132,6 +142,43 @@ main() {
       expect(isChannel("thi#ng"), isFalse);
       expect(isChannel("th#ing"), isFalse);
       expect(isChannel("t###"), isFalse);
+    });
+  });
+  
+  group('Irc', () {
+    var sb;
+    var irc;
+    
+    setUp(() {
+      sb = new StringBuffer();
+      irc = new Irc._internal(null, sb);
+    });
+    
+    test('should write', () {
+      irc.write("hello");
+      expect(sb.toString(), equals("hello\n"));
+    });
+
+    test('should send message', () {
+      irc.sendMessage("person", "message");
+      expect(sb.toString(), equals("PRIVMSG person :message\n"));
+    });
+
+    test('should send notice', () {
+      irc.sendNotice("person", "notice");
+      expect(sb.toString(), equals("NOTICE person :notice\n"));
+    });
+
+    test('should join channel', () {
+      irc.join("#channel");
+      expect(sb.toString(), equals("JOIN #channel\n"));
+    });
+
+    test('should set nick', () {
+      expect(irc.nick, isNull);
+      irc.setNick("bob");
+      expect(sb.toString(), equals("NICK bob\n"));
+      expect(irc.nick, equals("bob"));
     });
   });
 }
