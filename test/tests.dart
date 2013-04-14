@@ -1,10 +1,19 @@
-library tests;
+library irc_client;
 
-import 'package:irc_client/irc_client.dart';
 import 'package:unittest/unittest.dart';
+import 'dart:io';
+import 'dart:async';
+
+part '../lib/src/constants.dart';
+part '../lib/src/irc.dart';
+part '../lib/src/command.dart';
+part '../lib/src/handler.dart';
+part '../lib/src/nickserv.dart';
+part '../lib/src/transformer.dart';
+part '../lib/src/client.dart';
 
 main() {
-  group('Commandommand tests', () {
+  group('Command', () {
     test('should recognise prefix', () {
       var cmd = new Command(":prefix more stuff");
       expect(cmd.prefix, equals("prefix"));
@@ -85,6 +94,53 @@ main() {
       expect(cmd.trailing, equals("trailing"));
     });
   });
+  
+  group('namesAreEqual', () {
+    test('should think {==[', () {
+      expect(namesAreEqual("{", "["), isTrue);
+    });
+
+    test('should think }==]', () {
+      expect(namesAreEqual("}", "]"), isTrue);
+    });
+
+    test(r'should think |==\', () {
+      expect(namesAreEqual("|", r"\"), isTrue);
+    });
+
+    test('should think ^==~', () {
+      expect(namesAreEqual("^", "~"), isTrue);
+    });
+
+    test(r'should think JAMES[]\~==james{}|^', () {
+      expect(namesAreEqual(r"JAMES[]\~", "james{}|^"), isTrue);
+    });
+  });
+  
+  group('isChannel', () {
+    test('should recognise channel starting with #', () {
+      expect(isChannel("#thing"), isTrue);
+    });
+
+    test('should recognise channel starting with &', () {
+      expect(isChannel("&thing"), isTrue);
+    });
+
+    test('should recognise channel starting with +', () {
+      expect(isChannel("+thing"), isTrue);
+    });
+
+    test('should recognise channel starting with !', () {
+      expect(isChannel("!thing"), isTrue);
+    });
+
+
+    test('should not recognise non-channels', () {
+      expect(isChannel("thing"), isFalse);
+      expect(isChannel("thing+"), isFalse);
+      expect(isChannel("thi#ng"), isFalse);
+      expect(isChannel("th#ing"), isFalse);
+      expect(isChannel("t###"), isFalse);
+    });
+  });
 }
-
-

@@ -40,20 +40,20 @@ class NickServHandler extends Handler {
     }
     if (cmd.commandNumber == Errors.NICKNAME_IN_USE) {
       var inUseNick = cmd.params[1];
-      if (inUseNick == irc.nick) {
+      if (namesAreEqual(inUseNick, irc.nick)) {
         var newNick = "${irc.nick}_";
         irc.setNick(newNick);
         irc.sendMessage("nickserv", "ghost ${_originalNick} ${nickservPassword}");
       }
       return true;
     }
-    if (cmd.command == Commands.NOTICE && cmd.params[0] == irc.nick 
+    if (cmd.command == Commands.NOTICE && namesAreEqual(cmd.params[0], irc.nick) 
         && cmd.trailing.contains("has been ghosted")) {
       irc.setNick(_originalNick);
       _identify(irc);
       return true;
     }
-    if (cmd.command == Commands.NOTICE && cmd.params[0] == irc.nick 
+    if (cmd.command == Commands.NOTICE && namesAreEqual(cmd.params[0], irc.nick) 
         && cmd.trailing.contains("You are now identified for")) {
       _connected = true;
       irc._client.connected(irc);
