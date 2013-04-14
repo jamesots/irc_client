@@ -152,7 +152,6 @@ bool namesAreEqual(String nameOne, String nameTwo) {
 //TODO: extract user from prefix properly
 //TODO: handle connection closing, and reconnection
 //TODO: do USER properly
-//TODO: use logger
 //TODO: methods to get list of users, etc
 // http://tools.ietf.org/html/rfc2812#section-3.2.2
 
