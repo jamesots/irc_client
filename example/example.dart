@@ -17,7 +17,7 @@ class BotHandler extends Handler {
   
   bool onPrivateMessage(String user, String message, Irc irc) {
     if (message.toLowerCase() == "help") {
-      irc.sendNotice(user, "This is an \u0002example\u0002 dart bot");
+      irc.sendNotice(user, "This is an ${BOLD}example${BOLD} dart bot");
       irc.sendNotice(user, "It isn't very useful");
     }
     return true;
@@ -38,7 +38,7 @@ class BotHandler extends Handler {
     http.read(url, headers: {"Accept": "application/json"}).then((body) {
       var data = parse(body);
       var tweet = data[0]["text"];
-      irc.sendMessage(channel, "A tweet: ${tweet}");
+      irc.sendMessage(channel, "${BOLD}A tweet:${BOLD} ${tweet}");
     });
   }
 }

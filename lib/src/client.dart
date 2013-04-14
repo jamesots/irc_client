@@ -147,6 +147,13 @@ bool namesAreEqual(String nameOne, String nameTwo) {
   return nameToLowerCase(nameOne) == nameToLowerCase(nameTwo);
 }
 
+/**
+ * Use this in a message for it to go bold in most IRC clients.
+ * 
+ * Example:
+ *     irc.sendNotice(user, "This is an ${BOLD}example${BOLD} message");
+ */
+final String BOLD = "\u0002";
 
 //TODO: do PONG properly
 //TODO: extract user from prefix properly
