@@ -26,6 +26,7 @@ class IrcClient {
   String nick;
   String realName;
   List<Handler> _handlers;
+  Logger ioLog = new Logger("io");
   
   /**
    * Create an IrcClient which will connect with the given [nick].
@@ -72,7 +73,7 @@ class IrcClient {
       irc.write("${Commands.USER} ${nick} 0 * :${realName}");
       
       stream.listen((cmd) {
-        print("<<${cmd.line}");
+        ioLog.fine("<<${cmd.line}");
         var handled = false;
         for (var handler in _handlers) {
           handled = handler.onCommand(cmd, irc);
@@ -151,7 +152,6 @@ bool namesAreEqual(String nameOne, String nameTwo) {
 //TODO: handle connection closing, and reconnection
 //TODO: do USER properly
 //TODO: use logger
-//TODO: character sets, wierd upper/lower case symbols thing
 //TODO: methods to get list of users, etc
 // http://tools.ietf.org/html/rfc2812#section-3.2.2
 

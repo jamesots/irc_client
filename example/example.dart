@@ -1,4 +1,5 @@
 import 'package:irc_client/irc_client.dart';
+import 'package:logging/logging.dart';
 import 'package:http/http.dart' as http;
 import 'dart:json';
 import 'dart:async';
@@ -44,6 +45,10 @@ class BotHandler extends Handler {
 
 main() {
   print("Starting bot");
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((r) {
+    print("${r.time}: ${r.loggerName}: ${r.message}");
+  });
   
   var bot = new IrcClient("bottymcbot");
   bot.realName = "Mr Bot";

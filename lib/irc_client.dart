@@ -24,6 +24,7 @@ library irc_client;
 
 import 'dart:io';
 import 'dart:async';
+import 'package:logging/logging.dart';
 
 part 'src/constants.dart';
 part 'src/irc.dart';

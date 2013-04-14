@@ -5,6 +5,7 @@ part of irc_client;
  * can send commands back to the IRC server.
  */
 class Irc {
+  Logger ioLog = new Logger("io");
   IrcClient _client;
   Socket _socket;
   String _nick;
@@ -21,7 +22,7 @@ class Irc {
    * the console, but will eventually replace with with a logger).
    */
   void write(String message) {
-    print(">>${message}"); //TODO: use a logger
+    ioLog.fine(">>${message}");
     _socket.writeln(message);
   }
   

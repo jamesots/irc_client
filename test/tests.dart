@@ -1,16 +1,7 @@
 library irc_client;
 
 import 'package:unittest/unittest.dart';
-import 'dart:io';
-import 'dart:async';
-
-part '../lib/src/constants.dart';
-part '../lib/src/irc.dart';
-part '../lib/src/command.dart';
-part '../lib/src/handler.dart';
-part '../lib/src/nickserv.dart';
-part '../lib/src/transformer.dart';
-part '../lib/src/client.dart';
+import 'package:irc_client/irc_client.dart';
 
 main() {
   group('Command', () {
