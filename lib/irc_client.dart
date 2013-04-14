@@ -8,7 +8,8 @@
  *     class BotHandler extends Handler {
  *       bool onChannelMessage(String channel, String message, Irc irc) {
  *         if (message.toLowerCase().contains("hello")) {
- *         irc.sendMessage(channel, "Hey!");#
+ *           irc.sendMessage(channel, "Hey!");
+ *         }
  *       }
  *     }
  *     
