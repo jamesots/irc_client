@@ -40,7 +40,8 @@ calls methods on the supplied <a class="crossref" href="../irc_client/IrcClient.
 class BotHandler extends Handler {
   bool onChannelMessage(String channel, String message, Irc irc) {
     if (message.toLowerCase().contains("hello")) {
-    irc.sendMessage(channel, "Hey!");#
+      irc.sendMessage(channel, "Hey!");
+    }
   }
 }
 
@@ -56,6 +57,7 @@ class IrcClient {
  String nick;
  String realName;
  List&lt;Handler&gt; _handlers;
+ Logger ioLog = new Logger("io");
  
  /**
   * Create an IrcClient which will connect with the given [nick].
@@ -102,7 +104,7 @@ class IrcClient {
      irc.write("${Commands.USER} ${nick} 0 * :${realName}");
      
      stream.listen((cmd) {
-       print("&lt;&lt;${cmd.line}");
+       ioLog.fine("&lt;&lt;${cmd.line}");
        var handled = false;
        for (var handler in _handlers) {
          handled = handler.onCommand(cmd, irc);
@@ -114,14 +116,14 @@ class IrcClient {
          if (cmd.commandNumber == Replies.END_OF_MOTD) {
            connected(irc);
          }
-         if (cmd.command == Commands.PRIVMSG &amp;&amp; cmd.params[0].startsWith("#")) {
+         if (cmd.command == Commands.PRIVMSG &amp;&amp; isChannel(cmd.params[0])) {
            for (var handler in _handlers) {
              if (handler.onChannelMessage(cmd.params[0], cmd.trailing, irc)) {
                break;
              }
            }
          }
-         if (cmd.command == Commands.PRIVMSG &amp;&amp; cmd.params[0] == nick) {
+         if (cmd.command == Commands.PRIVMSG &amp;&amp; namesAreEqual(cmd.params[0], nick)) {
            var user = cmd.prefix.substring(0, cmd.prefix.indexOf("!"));
            for (var handler in _handlers) {
              if (handler.onPrivateMessage(user, cmd.trailing, irc)) {
@@ -143,7 +145,7 @@ class IrcClient {
 <h3>Constructors</h3>
 <div class="method"><h4 id="IrcClient">
 <button class="show-code">Code</button>
-new <strong>IrcClient</strong>(String nick) <a class="anchor-link" href="#IrcClient"
+new <strong>IrcClient</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> nick) <a class="anchor-link" href="#IrcClient"
               title="Permalink to IrcClient.IrcClient">#</a></h4>
 <div class="doc">
 <p>Create an IrcClient which will connect with the given 
@@ -161,7 +163,7 @@ IrcClient(this.nick) {
 <h3>Properties</h3>
 <div class="field"><h4 id="handlers">
 <button class="show-code">Code</button>
-final List&lt;<a href="../irc_client/Handler.html">Handler</a>&gt;         <strong>handlers</strong> <a class="anchor-link"
+final <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="../irc_client/Handler.html">Handler</a>&gt;         <strong>handlers</strong> <a class="anchor-link"
             href="#handlers"
             title="Permalink to IrcClient.handlers">#</a>
         </h4>
@@ -173,9 +175,21 @@ List&lt;Handler&gt; get handlers =&gt; _handlers;
 </pre>
 </div>
 </div>
+<div class="field"><h4 id="ioLog">
+<button class="show-code">Code</button>
+Logger         <strong>ioLog</strong> <a class="anchor-link"
+            href="#ioLog"
+            title="Permalink to IrcClient.ioLog">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Logger ioLog = new Logger("io")
+</pre>
+</div>
+</div>
 <div class="field"><h4 id="nick">
 <button class="show-code">Code</button>
-String         <strong>nick</strong> <a class="anchor-link"
+<a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>nick</strong> <a class="anchor-link"
             href="#nick"
             title="Permalink to IrcClient.nick">#</a>
         </h4>
@@ -187,7 +201,7 @@ String nick
 </div>
 <div class="field"><h4 id="realName">
 <button class="show-code">Code</button>
-String         <strong>realName</strong> <a class="anchor-link"
+<a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>realName</strong> <a class="anchor-link"
             href="#realName"
             title="Permalink to IrcClient.realName">#</a>
         </h4>
@@ -221,7 +235,7 @@ connected(Irc irc) {
 </div>
 <div class="method"><h4 id="run">
 <button class="show-code">Code</button>
-dynamic<strong>run</strong>(String server, [int port = 6667]) <a class="anchor-link" href="#run"
+dynamic<strong>run</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> server, [<a href="http://api.dartlang.org/dart_core/int.html">int</a> port = 6667]) <a class="anchor-link" href="#run"
               title="Permalink to IrcClient.run">#</a></h4>
 <div class="doc">
 <p>Connects to the 
@@ -242,7 +256,7 @@ run(String server, [int port = 6667]) {
    irc.write("${Commands.USER} ${nick} 0 * :${realName}");
    
    stream.listen((cmd) {
-     print("&lt;&lt;${cmd.line}");
+     ioLog.fine("&lt;&lt;${cmd.line}");
      var handled = false;
      for (var handler in _handlers) {
        handled = handler.onCommand(cmd, irc);
@@ -254,14 +268,14 @@ run(String server, [int port = 6667]) {
        if (cmd.commandNumber == Replies.END_OF_MOTD) {
          connected(irc);
        }
-       if (cmd.command == Commands.PRIVMSG &amp;&amp; cmd.params[0].startsWith("#")) {
+       if (cmd.command == Commands.PRIVMSG &amp;&amp; isChannel(cmd.params[0])) {
          for (var handler in _handlers) {
            if (handler.onChannelMessage(cmd.params[0], cmd.trailing, irc)) {
              break;
            }
          }
        }
-       if (cmd.command == Commands.PRIVMSG &amp;&amp; cmd.params[0] == nick) {
+       if (cmd.command == Commands.PRIVMSG &amp;&amp; namesAreEqual(cmd.params[0], nick)) {
          var user = cmd.prefix.substring(0, cmd.prefix.indexOf("!"));
          for (var handler in _handlers) {
            if (handler.onPrivateMessage(user, cmd.trailing, irc)) {
@@ -284,7 +298,7 @@ run(String server, [int port = 6667]) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-04-13 21:24:30.750</div>
+          <div>This page was generated at 2013-04-14 10:16:33.346</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

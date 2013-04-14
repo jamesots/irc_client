@@ -34,7 +34,8 @@
 class BotHandler extends Handler {
   bool onChannelMessage(String channel, String message, Irc irc) {
     if (message.toLowerCase().contains("hello")) {
-    irc.sendMessage(channel, "Hey!");#
+      irc.sendMessage(channel, "Hey!");
+    }
   }
 }
 
@@ -45,6 +46,67 @@ main() {
 }
 </code></pre>
 <p>There is a more complex example in example/example.dart</p></div>
+<div>
+<h3>Functions</h3>
+<div class="method"><h4 id="namesAreEqual">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/bool.html">bool</a> <strong>namesAreEqual</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> nameOne, <a href="http://api.dartlang.org/dart_core/String.html">String</a> nameTwo) <a class="anchor-link" href="#namesAreEqual"
+              title="Permalink to namesAreEqual">#</a></h4>
+<div class="doc">
+<p>Returns <code>true</code> if 
+<span class="param">nameOne</span> and 
+<span class="param">nameTwo</span> are equal, according to
+IRC's rules of equality, where everything is converted to lower
+case, and these characters {}|^ are considered to be the lower case
+versions of []\~ </p>
+<pre class="source">
+bool namesAreEqual(String nameOne, String nameTwo) {
+ return nameToLowerCase(nameOne) == nameToLowerCase(nameTwo);
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="nameToLowerCase">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/String.html">String</a> <strong>nameToLowerCase</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> name) <a class="anchor-link" href="#nameToLowerCase"
+              title="Permalink to nameToLowerCase">#</a></h4>
+<div class="doc">
+<p>Converts a nick or channel name to lower case according to
+IRC's rules of equality, where these characters {}|^ are 
+considered to be the lower case versions of []\~ </p>
+<pre class="source">
+String nameToLowerCase(String name) {
+ return name
+     .toLowerCase()
+     .replaceAll(r"[", r"{")
+     .replaceAll(r"]", r"}")
+     .replaceAll(r"\", r"|")
+     .replaceAll(r"~", r"^");
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="isChannel">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/bool.html">bool</a> <strong>isChannel</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> possibleChannel) <a class="anchor-link" href="#isChannel"
+              title="Permalink to isChannel">#</a></h4>
+<div class="doc">
+<p>Returns <code>true</code> if the 
+<span class="param">possibleChannel</span> is channel name, because it
+starts with #, &amp;, + or !</p>
+<pre class="source">
+bool isChannel(String possibleChannel) {
+ if (possibleChannel.length &lt; 2) {
+   return false;
+ }
+ var firstChar = possibleChannel[0];
+ return firstChar == '#' || firstChar == '&amp;' || firstChar == '+'
+     || firstChar == '!';
+}
+</pre>
+</div>
+</div>
+</div>
 <div>
 <h3>Classes</h3>
           <div class="type">
@@ -106,7 +168,7 @@ main() {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-04-13 21:24:30.419</div>
+          <div>This page was generated at 2013-04-14 10:16:33.225</div>
         </div>
         <script async src="client-live-nav.js"></script>
         </body></html>

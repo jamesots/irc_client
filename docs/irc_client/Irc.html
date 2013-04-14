@@ -36,6 +36,7 @@
 can send commands back to the IRC server.</p>
 <pre class="source">
 class Irc {
+ Logger ioLog = new Logger("io");
  IrcClient _client;
  Socket _socket;
  String _nick;
@@ -52,7 +53,7 @@ class Irc {
   * the console, but will eventually replace with with a logger).
   */
  void write(String message) {
-   print("&gt;&gt;${message}"); //TODO: use a logger
+   ioLog.fine("&gt;&gt;${message}");
    _socket.writeln(message);
  }
  
@@ -89,9 +90,21 @@ class Irc {
 </div>
 <div>
 <h3>Properties</h3>
+<div class="field"><h4 id="ioLog">
+<button class="show-code">Code</button>
+Logger         <strong>ioLog</strong> <a class="anchor-link"
+            href="#ioLog"
+            title="Permalink to Irc.ioLog">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Logger ioLog = new Logger("io")
+</pre>
+</div>
+</div>
 <div class="field"><h4 id="nick">
 <button class="show-code">Code</button>
-final String         <strong>nick</strong> <a class="anchor-link"
+final <a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>nick</strong> <a class="anchor-link"
             href="#nick"
             title="Permalink to Irc.nick">#</a>
         </h4>
@@ -107,7 +120,7 @@ String get nick =&gt; _nick;
 <h3>Methods</h3>
 <div class="method"><h4 id="join">
 <button class="show-code">Code</button>
-void <strong>join</strong>(String channel) <a class="anchor-link" href="#join"
+void <strong>join</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> channel) <a class="anchor-link" href="#join"
               title="Permalink to Irc.join">#</a></h4>
 <div class="doc">
 <p>Joins a 
@@ -121,7 +134,7 @@ void join(String channel) {
 </div>
 <div class="method"><h4 id="sendMessage">
 <button class="show-code">Code</button>
-void <strong>sendMessage</strong>(String nickOrChannel, String message) <a class="anchor-link" href="#sendMessage"
+void <strong>sendMessage</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> nickOrChannel, <a href="http://api.dartlang.org/dart_core/String.html">String</a> message) <a class="anchor-link" href="#sendMessage"
               title="Permalink to Irc.sendMessage">#</a></h4>
 <div class="doc">
 <p>Sends a private 
@@ -136,7 +149,7 @@ void sendMessage(String nickOrChannel, String message) {
 </div>
 <div class="method"><h4 id="sendNotice">
 <button class="show-code">Code</button>
-void <strong>sendNotice</strong>(String user, String notice) <a class="anchor-link" href="#sendNotice"
+void <strong>sendNotice</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> user, <a href="http://api.dartlang.org/dart_core/String.html">String</a> notice) <a class="anchor-link" href="#sendNotice"
               title="Permalink to Irc.sendNotice">#</a></h4>
 <div class="doc">
 <p>Sends a 
@@ -151,7 +164,7 @@ void sendNotice(String user, String notice) {
 </div>
 <div class="method"><h4 id="setNick">
 <button class="show-code">Code</button>
-void <strong>setNick</strong>(String nick) <a class="anchor-link" href="#setNick"
+void <strong>setNick</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> nick) <a class="anchor-link" href="#setNick"
               title="Permalink to Irc.setNick">#</a></h4>
 <div class="doc">
 <p>Sets the current 
@@ -166,7 +179,7 @@ void setNick(String nick) {
 </div>
 <div class="method"><h4 id="write">
 <button class="show-code">Code</button>
-void <strong>write</strong>(String message) <a class="anchor-link" href="#write"
+void <strong>write</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> message) <a class="anchor-link" href="#write"
               title="Permalink to Irc.write">#</a></h4>
 <div class="doc">
 <p>Writes the 
@@ -174,7 +187,7 @@ void <strong>write</strong>(String message) <a class="anchor-link" href="#write"
 the console, but will eventually replace with with a logger).</p>
 <pre class="source">
 void write(String message) {
- print("&gt;&gt;${message}"); //TODO: use a logger
+ ioLog.fine("&gt;&gt;${message}");
  _socket.writeln(message);
 }
 </pre>
@@ -185,7 +198,7 @@ void write(String message) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-04-13 21:24:30.707</div>
+          <div>This page was generated at 2013-04-14 10:16:33.385</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

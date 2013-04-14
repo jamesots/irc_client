@@ -50,9 +50,9 @@ class IrcTransformer extends StreamEventTransformer&lt;String, Command&gt; {
 <h3>Methods</h3>
 <div class="method inherited"><h4 id="bind">
 <button class="show-code">Code</button>
-Stream&lt;<a href="../irc_client/IrcTransformer.html">T</a>&gt; <strong>bind</strong>(Stream&lt;<a href="../irc_client/IrcTransformer.html">S</a>&gt; source) <a class="anchor-link" href="#bind"
+<a href="http://api.dartlang.org/dart_async/Stream.html">Stream</a>&lt;<a href="../irc_client/IrcTransformer.html">T</a>&gt; <strong>bind</strong>(<a href="http://api.dartlang.org/dart_async/Stream.html">Stream</a>&lt;<a href="../irc_client/IrcTransformer.html">S</a>&gt; source) <a class="anchor-link" href="#bind"
               title="Permalink to IrcTransformer.bind">#</a></h4>
-<div class="inherited-from">inherited from StreamEventTransformer </div><div class="doc">
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_async/StreamEventTransformer.html">StreamEventTransformer</a> </div><div class="doc">
 <pre class="source">
 Stream&lt;T&gt; bind(Stream&lt;S&gt; source) {
  return new EventTransformStream&lt;S, T&gt;(source, this);
@@ -62,14 +62,14 @@ Stream&lt;T&gt; bind(Stream&lt;S&gt; source) {
 </div>
 <div class="method"><h4 id="handleData">
 <button class="show-code">Code</button>
-void <strong>handleData</strong>(String event, EventSink&lt;<a href="../irc_client/Command.html">Command</a>&gt; sink) <a class="anchor-link" href="#handleData"
+void <strong>handleData</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> event, <a href="http://api.dartlang.org/dart_async/EventSink.html">EventSink</a>&lt;<a href="../irc_client/Command.html">Command</a>&gt; sink) <a class="anchor-link" href="#handleData"
               title="Permalink to IrcTransformer.handleData">#</a></h4>
 <div class="doc">
 <div class="inherited">
 <p>Act on incoming data event.</p>
 <p>The method may generate any number of events on the sink, but should
 not throw.</p>
-<div class="docs-inherited-from">docs inherited from StreamEventTransformer&lt;String, <a href="../irc_client/Command.html">Command</a>&gt; </div></div>
+<div class="docs-inherited-from">docs inherited from <a href="http://api.dartlang.org/dart_async/StreamEventTransformer.html">StreamEventTransformer</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>, <a href="../irc_client/Command.html">Command</a>&gt; </div></div>
 <pre class="source">
 void handleData(String event, EventSink&lt;Command&gt; sink) {
  var command = new Command(event);
@@ -80,9 +80,9 @@ void handleData(String event, EventSink&lt;Command&gt; sink) {
 </div>
 <div class="method inherited"><h4 id="handleDone">
 <button class="show-code">Code</button>
-void <strong>handleDone</strong>(EventSink&lt;<a href="../irc_client/IrcTransformer.html">T</a>&gt; sink) <a class="anchor-link" href="#handleDone"
+void <strong>handleDone</strong>(<a href="http://api.dartlang.org/dart_async/EventSink.html">EventSink</a>&lt;<a href="../irc_client/IrcTransformer.html">T</a>&gt; sink) <a class="anchor-link" href="#handleDone"
               title="Permalink to IrcTransformer.handleDone">#</a></h4>
-<div class="inherited-from">inherited from StreamEventTransformer </div><div class="doc">
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_async/StreamEventTransformer.html">StreamEventTransformer</a> </div><div class="doc">
 <p>Act on incoming done event.</p>
 <p>The method may generate any number of events on the sink, but should
 not throw.</p>
@@ -95,9 +95,9 @@ void handleDone(EventSink&lt;T&gt; sink){
 </div>
 <div class="method inherited"><h4 id="handleError">
 <button class="show-code">Code</button>
-void <strong>handleError</strong>(AsyncError error, EventSink&lt;<a href="../irc_client/IrcTransformer.html">T</a>&gt; sink) <a class="anchor-link" href="#handleError"
+void <strong>handleError</strong>(<a href="http://api.dartlang.org/dart_async/AsyncError.html">AsyncError</a> error, <a href="http://api.dartlang.org/dart_async/EventSink.html">EventSink</a>&lt;<a href="../irc_client/IrcTransformer.html">T</a>&gt; sink) <a class="anchor-link" href="#handleError"
               title="Permalink to IrcTransformer.handleError">#</a></h4>
-<div class="inherited-from">inherited from StreamEventTransformer </div><div class="doc">
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_async/StreamEventTransformer.html">StreamEventTransformer</a> </div><div class="doc">
 <p>Act on incoming error event.</p>
 <p>The method may generate any number of events on the sink, but should
 not throw.</p>
@@ -113,7 +113,7 @@ void handleError(AsyncError error, EventSink&lt;T&gt; sink) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-04-13 21:24:30.465</div>
+          <div>This page was generated at 2013-04-14 10:16:33.355</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
