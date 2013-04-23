@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:logging/logging.dart';
 
 part '../lib/src/constants.dart';
-part '../lib/src/irc.dart';
+part '../lib/src/connection.dart';
 part '../lib/src/command.dart';
 part '../lib/src/handler.dart';
 part '../lib/src/nickserv.dart';
@@ -147,39 +147,39 @@ main() {
   
   group('Irc', () {
     var sb;
-    var irc;
+    var cnx;
     
     setUp(() {
       sb = new StringBuffer();
-      irc = new Irc._(null, null, null, null);
-      irc._socket = sb;
+      cnx = new Connection._(null, null, null, null);
+      cnx._socket = sb;
     });
     
     test('should write', () {
-      irc.write("hello");
+      cnx.write("hello");
       expect(sb.toString(), equals("hello\n"));
     });
 
     test('should send message', () {
-      irc.sendMessage("person", "message");
+      cnx.sendMessage("person", "message");
       expect(sb.toString(), equals("PRIVMSG person :message\n"));
     });
 
     test('should send notice', () {
-      irc.sendNotice("person", "notice");
+      cnx.sendNotice("person", "notice");
       expect(sb.toString(), equals("NOTICE person :notice\n"));
     });
 
     test('should join channel', () {
-      irc.join("#channel");
+      cnx.join("#channel");
       expect(sb.toString(), equals("JOIN #channel\n"));
     });
 
     test('should set nick', () {
-      expect(irc.nick, isNull);
-      irc.setNick("bob");
+      expect(cnx.nick, isNull);
+      cnx.setNick("bob");
       expect(sb.toString(), equals("NICK bob\n"));
-      expect(irc.nick, equals("bob"));
+      expect(cnx.nick, equals("bob"));
     });
   });
 }

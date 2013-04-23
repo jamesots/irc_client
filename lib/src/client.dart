@@ -44,13 +44,13 @@ class IrcClient {
   List<Handler> get handlers => _handlers;
   
   /**
-   * Connects to the [server] on the given [port].
-   * 
-   * Currently there is no error handling, or handling of closed connections.
+   * Connects to the [server] on the given [port], and returns the
+   * [Connection].
    */
-  run(String server, [int port = 6667]) {
-    var irc = new Irc._(server, port, nick, realName, _handlers);
-    irc.connect();
+  Connection connect(String server, [int port = 6667]) {
+    var cnx = new Connection._(server, port, nick, realName, _handlers);
+    cnx.connect();
+    return cnx;
   }
 }
 

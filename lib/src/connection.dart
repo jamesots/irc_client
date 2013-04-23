@@ -1,10 +1,10 @@
 part of irc_client;
 
 /**
- * The [Irc] object is passed to methods on the [Handler]s, so that they
+ * The [Connection] object is passed to methods on the [Handler]s, so that they
  * can send commands back to the IRC server.
  */
-class Irc {
+class Connection {
   Logger ioLog = new Logger("io");
   StringSink _socket;
   String _nick;
@@ -13,7 +13,7 @@ class Irc {
   int _port;
   List<Handler> _handlers;
   
-  Irc._(this._server, this._port, this._nick, this._realName, this._handlers);
+  Connection._(this._server, this._port, this._nick, this._realName, this._handlers);
   
   /**
    * Returns the current nickname
@@ -63,7 +63,7 @@ class Irc {
    * called. This is usually not necessary, as the IrcClient or
    * NickServHandler calls this when appropriate anyway.
    */
-  connected(Irc irc) {
+  connected(Connection irc) {
     for (var handler in _handlers) {
       if (handler.onConnection(this)) {
         break;
@@ -71,6 +71,9 @@ class Irc {
     }
   }
   
+  /**
+   * Attemps to connect to the server that this connection handles.
+   */
   void connect() {
     Socket.connect(_server, _port).then((socket) {
       var stream = socket
@@ -121,10 +124,15 @@ class Irc {
   }
   
   _onError(error) {
-    
+    // TODO: what?
   }
   
   _onDone() {
-    
+    _socket = null;
+    for (var handler in _handlers) {
+      if (handler.onDisconnection(this)) {
+        break;
+      }
+    }
   }
 }

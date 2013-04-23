@@ -28,7 +28,7 @@ import 'dart:async';
 import 'package:logging/logging.dart';
 
 part 'src/constants.dart';
-part 'src/irc.dart';
+part 'src/connection.dart';
 part 'src/command.dart';
 part 'src/handler.dart';
 part 'src/nickserv.dart';

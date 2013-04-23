@@ -28,11 +28,11 @@ class NickServHandler extends Handler {
   
   NickServHandler(this.nickservPassword);
   
-  _identify(Irc irc) {
+  _identify(Connection irc) {
     irc.sendMessage("nickserv", "identify ${_originalNick} ${nickservPassword}");    
   }
   
-  bool onCommand(Command cmd, Irc irc) {
+  bool onCommand(Command cmd, Connection irc) {
     if (_first) {
       _originalNick = irc.nick;
       _identify(irc);
@@ -62,11 +62,16 @@ class NickServHandler extends Handler {
     return false;
   }
   
-  bool onConnection(Irc irc) {
+  bool onConnection(Connection irc) {
     if (!_connected) {
       return true;
     }
     return false;
+  }
+  
+  bool onDisconnection(Connection irc) {
+    _connected = false;
+    _first = true;
   }
 }
 

@@ -8,7 +8,7 @@ class Handler {
    * Called every time a command is received from the server. No more onCommand
    * handlers will be called if this one returns [true].
    */
-  bool onCommand(Command cmd, Irc irc) {
+  bool onCommand(Command cmd, Connection cnx) {
     return false;
   }
   
@@ -16,7 +16,7 @@ class Handler {
    * Called every time a channel message is received from the server. 
    * No more onChannelMessage handlers will be called if this one returns [true].
    */
-  bool onChannelMessage(String channel, String message, Irc irc) {
+  bool onChannelMessage(String channel, String message, Connection cnx) {
     return false;    
   }
   
@@ -25,7 +25,7 @@ class Handler {
    * to the current nick. No more onPrivateMessage handlers will be called if 
    * this one returns [true].
    */
-  bool onPrivateMessage(String nick, String message, Irc irc) {
+  bool onPrivateMessage(String nick, String message, Connection cnx) {
     return false;
   }
   
@@ -33,11 +33,15 @@ class Handler {
    * Called after the client has finished connecting to the IRC server.
    * No more onConnection handlers will be called if this one returns [true].
    */
-  bool onConnection(Irc irc) {
+  bool onConnection(Connection irc) {
     return false;
   }
   
-  bool onDisconnection(Irc irc) {
+  /**
+   * Called when the server is disconnected from the client.
+   * No more onDisconnection handlers will be called if this one returns [true].
+   */
+  bool onDisconnection(Connection cnx) {
     return false;
   }
 }

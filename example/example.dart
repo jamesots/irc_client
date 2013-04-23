@@ -5,40 +5,40 @@ import 'dart:json';
 import 'dart:async';
 
 class BotHandler extends Handler {
-  bool onChannelMessage(String channel, String message, Irc irc) {
+  bool onChannelMessage(String channel, String message, Connection cnx) {
     if (message.toLowerCase().contains("hello")) {
-      irc.sendMessage(channel, "Hey!");
+      cnx.sendMessage(channel, "Hey!");
     }
     if (message.contains("tweet?")) {
-      getTweet(channel, irc);
+      getTweet(channel, cnx);
     }
     return true;
   }
   
-  bool onPrivateMessage(String user, String message, Irc irc) {
+  bool onPrivateMessage(String user, String message, Connection cnx) {
     if (message.toLowerCase() == "help") {
-      irc.sendNotice(user, "This is an ${BOLD}example${BOLD} dart bot");
-      irc.sendNotice(user, "It isn't very useful");
+      cnx.sendNotice(user, "This is an ${BOLD}example${BOLD} dart bot");
+      cnx.sendNotice(user, "It isn't very useful");
     }
     return true;
   }
   
-  bool onConnection(Irc irc) {
+  bool onConnection(Connection cnx) {
     var channel = "#mytest56";
-    irc.join(channel);
-    irc.sendMessage(channel, "I'm baaack!");
+    cnx.join(channel);
+    cnx.sendMessage(channel, "I'm baaack!");
     new Timer.periodic(new Duration(minutes: 8), (timer) {
-      irc.sendMessage(channel, "I'm still here!");
+      cnx.sendMessage(channel, "I'm still here!");
     });
     return true;
   }
   
-  getTweet(String channel, Irc irc) {
+  getTweet(String channel, Connection cnx) {
     var url = "https://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&screen_name=inspire_us&count=1";
     http.read(url, headers: {"Accept": "application/json"}).then((body) {
       var data = parse(body);
       var tweet = data[0]["text"];
-      irc.sendMessage(channel, "${BOLD}A tweet:${BOLD} ${tweet}");
+      cnx.sendMessage(channel, "${BOLD}A tweet:${BOLD} ${tweet}");
     });
   }
 }
@@ -54,6 +54,6 @@ main() {
   bot.realName = "Mr Bot";
 //  bot.handlers.add(new NickServHandler("wibble"));
   bot.handlers.add(new BotHandler());
-  bot.run("irc.freenode.net", 6667);
+  bot.connect("irc.freenode.net", 6667);
 }
 
