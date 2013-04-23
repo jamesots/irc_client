@@ -44,69 +44,13 @@ class IrcClient {
   List<Handler> get handlers => _handlers;
   
   /**
-   * Call this to cause the [onConnection] methods of the [handlers] get
-   * called. This is usually not necessary, as the IrcClient or
-   * NickServHandler calls this when appropriate anyway.
-   */
-  connected(Irc irc) {
-    for (var handler in handlers) {
-      if (handler.onConnection(irc)) {
-        break;
-      }
-    }
-  }
-  
-  /**
    * Connects to the [server] on the given [port].
    * 
    * Currently there is no error handling, or handling of closed connections.
    */
   run(String server, [int port = 6667]) {
-    Socket.connect(server, port).then((socket) {
-      var stream = socket
-          .transform(new StringDecoder())
-          .transform(new LineTransformer())
-          .transform(new IrcTransformer());
-      
-      var irc = new Irc._internal(this, socket);
-      
-      irc.setNick(nick);
-      irc.write("${Commands.USER} ${nick} 0 * :${realName}");
-      
-      stream.listen((cmd) {
-        ioLog.fine("<<${cmd.line}");
-        var handled = false;
-        for (var handler in _handlers) {
-          handled = handler.onCommand(cmd, irc);
-          if (handled) {
-            break;
-          }
-        }
-        if (!handled) {
-          if (cmd.commandNumber == Replies.END_OF_MOTD) {
-            connected(irc);
-          }
-          if (cmd.command == Commands.PRIVMSG && isChannel(cmd.params[0])) {
-            for (var handler in _handlers) {
-              if (handler.onChannelMessage(cmd.params[0], cmd.trailing, irc)) {
-                break;
-              }
-            }
-          }
-          if (cmd.command == Commands.PRIVMSG && namesAreEqual(cmd.params[0], nick)) {
-            var user = cmd.prefix.substring(0, cmd.prefix.indexOf("!"));
-            for (var handler in _handlers) {
-              if (handler.onPrivateMessage(user, cmd.trailing, irc)) {
-                break;
-              }
-            }
-          }
-          if (cmd.command == Commands.PING) {
-            irc.write("${Commands.PONG} thisserver ${cmd.params[0]}");
-          }
-        }
-      });
-    });
+    var irc = new Irc._(server, port, nick, realName, _handlers);
+    irc.connect();
   }
 }
 

@@ -56,7 +56,7 @@ class NickServHandler extends Handler {
     if (cmd.command == Commands.NOTICE && namesAreEqual(cmd.params[0], irc.nick) 
         && cmd.trailing.contains("You are now identified for")) {
       _connected = true;
-      irc._client.connected(irc);
+      irc.connected(irc);
       return true;
     }
     return false;

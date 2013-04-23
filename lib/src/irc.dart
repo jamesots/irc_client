@@ -6,11 +6,14 @@ part of irc_client;
  */
 class Irc {
   Logger ioLog = new Logger("io");
-  IrcClient _client;
   StringSink _socket;
   String _nick;
+  String _server;
+  String _realName;
+  int _port;
+  List<Handler> _handlers;
   
-  Irc._internal(this._client, this._socket);
+  Irc._(this._server, this._port, this._nick, this._realName, this._handlers);
   
   /**
    * Returns the current nickname
@@ -53,5 +56,75 @@ class Irc {
   void setNick(String nick) {
     _nick = nick;
     write("${Commands.NICK} ${nick}");
+  }
+  
+  /**
+   * Call this to cause the [onConnection] methods of the [handlers] get
+   * called. This is usually not necessary, as the IrcClient or
+   * NickServHandler calls this when appropriate anyway.
+   */
+  connected(Irc irc) {
+    for (var handler in _handlers) {
+      if (handler.onConnection(this)) {
+        break;
+      }
+    }
+  }
+  
+  void connect() {
+    Socket.connect(_server, _port).then((socket) {
+      var stream = socket
+          .transform(new StringDecoder())
+          .transform(new LineTransformer())
+          .transform(new IrcTransformer());
+      _socket = socket;
+      
+      setNick(_nick);
+      write("${Commands.USER} ${_nick} 0 * :${_realName}");
+      
+      stream.listen((cmd) {
+        ioLog.fine("<<${cmd.line}");
+        var handled = false;
+        for (var handler in _handlers) {
+          handled = handler.onCommand(cmd, this);
+          if (handled) {
+            break;
+          }
+        }
+        if (!handled) {
+          if (cmd.commandNumber == Replies.END_OF_MOTD) {
+            connected(this);
+          }
+          if (cmd.command == Commands.PRIVMSG && isChannel(cmd.params[0])) {
+            for (var handler in _handlers) {
+              if (handler.onChannelMessage(cmd.params[0], cmd.trailing, this)) {
+                break;
+              }
+            }
+          }
+          if (cmd.command == Commands.PRIVMSG && namesAreEqual(cmd.params[0], nick)) {
+            var user = cmd.prefix.substring(0, cmd.prefix.indexOf("!"));
+            for (var handler in _handlers) {
+              if (handler.onPrivateMessage(user, cmd.trailing, this)) {
+                break;
+              }
+            }
+          }
+          if (cmd.command == Commands.PING) {
+            write("${Commands.PONG} thisserver ${cmd.params[0]}");
+          }
+        }
+      },
+      onError: _onError, 
+      onDone: _onDone);
+    });
+  }
+  
+  _onError(error) {
+    
+  }
+  
+  _onDone() {
+    
   }
 }

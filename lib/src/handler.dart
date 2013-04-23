@@ -36,6 +36,10 @@ class Handler {
   bool onConnection(Irc irc) {
     return false;
   }
+  
+  bool onDisconnection(Irc irc) {
+    return false;
+  }
 }
 
 

@@ -151,7 +151,8 @@ main() {
     
     setUp(() {
       sb = new StringBuffer();
-      irc = new Irc._internal(null, sb);
+      irc = new Irc._(null, null, null, null);
+      irc._socket = sb;
     });
     
     test('should write', () {
