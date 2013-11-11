@@ -71,15 +71,22 @@ class Connection {
     }
   }
   
+  newIrcTransformer() {
+    return new StreamTransformer.fromHandlers(handleData: (String event, EventSink<Command> sink) {
+      var command = new Command(event);
+      sink.add(command);
+    });
+  }
+  
   /**
    * Attemps to connect to the server that this connection handles.
    */
   void connect() {
     Socket.connect(_server, _port).then((socket) {
       var stream = socket
-          .transform(new StringDecoder())
-          .transform(new LineTransformer())
-          .transform(new IrcTransformer());
+          .transform(UTF8.decoder)
+          .transform(new LineSplitter())
+          .transform(newIrcTransformer());
       _socket = socket;
       
       setNick(_nick);

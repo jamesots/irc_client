@@ -3,6 +3,7 @@ library irc_client;
 import 'package:unittest/unittest.dart';
 import 'dart:io';
 import 'dart:async';
+import 'dart:convert';
 import 'package:logging/logging.dart';
 
 part '../lib/src/constants.dart';
@@ -10,7 +11,6 @@ part '../lib/src/connection.dart';
 part '../lib/src/command.dart';
 part '../lib/src/handler.dart';
 part '../lib/src/nickserv.dart';
-part '../lib/src/transformer.dart';
 part '../lib/src/client.dart';
 
 main() {
@@ -151,7 +151,7 @@ main() {
     
     setUp(() {
       sb = new StringBuffer();
-      cnx = new Connection._(null, null, null, null);
+      cnx = new Connection._(null, null, null, null, null);
       cnx._socket = sb;
     });
     

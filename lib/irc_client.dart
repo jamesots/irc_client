@@ -25,6 +25,7 @@ library irc_client;
 
 import 'dart:io';
 import 'dart:async';
+import 'dart:convert';
 import 'package:logging/logging.dart';
 
 part 'src/constants.dart';
@@ -32,5 +33,4 @@ part 'src/connection.dart';
 part 'src/command.dart';
 part 'src/handler.dart';
 part 'src/nickserv.dart';
-part 'src/transformer.dart';
 part 'src/client.dart';

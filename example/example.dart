@@ -1,7 +1,7 @@
 import 'package:irc_client/irc_client.dart';
 import 'package:logging/logging.dart';
 import 'package:http/http.dart' as http;
-import 'dart:json';
+import 'dart:convert';
 import 'dart:async';
 
 class BotHandler extends Handler {
@@ -36,7 +36,7 @@ class BotHandler extends Handler {
   getTweet(String channel, Connection cnx) {
     var url = "https://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&screen_name=inspire_us&count=1";
     http.read(url, headers: {"Accept": "application/json"}).then((body) {
-      var data = parse(body);
+      var data = JSON.decode(body);
       var tweet = data[0]["text"];
       cnx.sendMessage(channel, "${BOLD}A tweet:${BOLD} ${tweet}");
     });
