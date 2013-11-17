@@ -121,7 +121,7 @@ class Connection {
             }
           }
           if (cmd.command == Commands.PING) {
-            write("${Commands.PONG} thisserver ${cmd.params[0]}");
+            write("${Commands.PONG} ${cmd.params[0]}");
           }
         }
       },
