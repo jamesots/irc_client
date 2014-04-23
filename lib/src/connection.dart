@@ -131,16 +131,19 @@ class Connection {
   }
   
   /**
-   * Attempts to disconnect to the server that this connection handles.
+   * Attempts to disconnect from the server that this connection handles.
    */
   Future<Socket> close() {
     var completer = new Completer();
     if (_socket == null) {
       ioLog.warning("Can't close an already closed connection");
       completer.completeError("The connection is already closed");
+    } else {
+      _socket.close().then((closedSocket) {
+        _onDone();
+        return completer.complete(closedSocket);
+      });
     }
-    else
-      _socket.close().then((closedSocket) => completer.complete(closedSocket));
     return completer.future;
   }
 
