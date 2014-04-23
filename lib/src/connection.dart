@@ -6,7 +6,7 @@ part of irc_client;
  */
 class Connection {
   Logger ioLog = new Logger("io");
-  StringSink _socket;
+  Socket _socket;
   String _nick;
   String _server;
   String _realName;

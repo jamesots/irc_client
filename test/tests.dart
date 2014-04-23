@@ -1,7 +1,6 @@
 library irc_client;
 
 import 'package:unittest/unittest.dart';
-import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:logging/logging.dart';
@@ -12,6 +11,21 @@ part '../lib/src/command.dart';
 part '../lib/src/handler.dart';
 part '../lib/src/nickserv.dart';
 part '../lib/src/client.dart';
+
+/**
+ * Mock Socket class implementing just what we do use from Socket
+ */
+class Socket {
+  StringBuffer sb;
+
+  Socket() {
+    sb = new StringBuffer();
+  }
+
+  void writeln(Object obj) => sb.writeln(obj);
+  Future<Socket> close() => new Future.value(this);
+  static Future<Socket> connect(host, int port) => new Future.value(new Socket());
+}
 
 main() {
   group('Command', () {
@@ -146,39 +160,39 @@ main() {
   });
   
   group('Irc', () {
-    var sb;
+    var socket;
     var cnx;
     
     setUp(() {
-      sb = new StringBuffer();
-      cnx = new Connection._(null, null, null, null, null);
-      cnx._socket = sb;
+      socket = new Socket();
+      cnx = new Connection._(null, null, null, null, new List<Handler>());
+      cnx._socket = socket;
     });
     
     test('should write', () {
       cnx.write("hello");
-      expect(sb.toString(), equals("hello\n"));
+      expect(socket.sb.toString(), equals("hello\n"));
     });
 
     test('should send message', () {
       cnx.sendMessage("person", "message");
-      expect(sb.toString(), equals("PRIVMSG person :message\n"));
+      expect(socket.sb.toString(), equals("PRIVMSG person :message\n"));
     });
 
     test('should send notice', () {
       cnx.sendNotice("person", "notice");
-      expect(sb.toString(), equals("NOTICE person :notice\n"));
+      expect(socket.sb.toString(), equals("NOTICE person :notice\n"));
     });
 
     test('should join channel', () {
       cnx.join("#channel");
-      expect(sb.toString(), equals("JOIN #channel\n"));
+      expect(socket.sb.toString(), equals("JOIN #channel\n"));
     });
 
     test('should set nick', () {
       expect(cnx.nick, isNull);
       cnx.setNick("bob");
-      expect(sb.toString(), equals("NICK bob\n"));
+      expect(socket.sb.toString(), equals("NICK bob\n"));
       expect(cnx.nick, equals("bob"));
     });
   });
