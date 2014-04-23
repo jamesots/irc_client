@@ -1,6 +1,8 @@
 library irc_client;
 
 import 'package:unittest/unittest.dart';
+import 'package:unittest/mock.dart';
+import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:logging/logging.dart';
@@ -11,21 +13,6 @@ part '../lib/src/command.dart';
 part '../lib/src/handler.dart';
 part '../lib/src/nickserv.dart';
 part '../lib/src/client.dart';
-
-/**
- * Mock Socket class implementing just what we do use from Socket
- */
-class Socket {
-  StringBuffer sb;
-
-  Socket() {
-    sb = new StringBuffer();
-  }
-
-  void writeln(Object obj) => sb.writeln(obj);
-  Future<Socket> close() => new Future.value(this);
-  static Future<Socket> connect(host, int port) => new Future.value(new Socket());
-}
 
 main() {
   group('Command', () {
@@ -162,55 +149,58 @@ main() {
   group('Irc', () {
     var socket;
     var cnx;
+    var sb;
     
     setUp(() {
-      socket = new Socket();
+      sb = new StringBuffer();
+      socket = new MockSocket();
+      socket.when(callsTo('writeln')).thenCall(sb.writeln);
       cnx = new Connection._(null, null, null, null, new List<Handler>());
       cnx._socket = socket;
     });
     
     test('should write', () {
       cnx.write("hello");
-      expect(socket.sb.toString(), equals("hello\n"));
+      expect(sb.toString(), equals("hello\n"));
     });
 
     test('should send message', () {
       cnx.sendMessage("person", "message");
-      expect(socket.sb.toString(), equals("PRIVMSG person :message\n"));
+      expect(sb.toString(), equals("PRIVMSG person :message\n"));
     });
 
     test('should send notice', () {
       cnx.sendNotice("person", "notice");
-      expect(socket.sb.toString(), equals("NOTICE person :notice\n"));
+      expect(sb.toString(), equals("NOTICE person :notice\n"));
     });
 
     test('should join channel', () {
       cnx.join("#channel");
-      expect(socket.sb.toString(), equals("JOIN #channel\n"));
+      expect(sb.toString(), equals("JOIN #channel\n"));
     });
 
     test('should set nick', () {
       expect(cnx.nick, isNull);
       cnx.setNick("bob");
-      expect(socket.sb.toString(), equals("NICK bob\n"));
+      expect(sb.toString(), equals("NICK bob\n"));
       expect(cnx.nick, equals("bob"));
     });
 
     test('should close properly, returning the socket', () {
-      cnx.close().then(
-        expectAsync1((value) {
-          expect(value, equals(socket));
-      })
-      );
+      cnx._socket.when(callsTo('close')).thenReturn(new Future.value(cnx._socket));
+      return cnx.close().then((value) {
+        expect(value, equals(socket));
+        socket.getLogs(callsTo('close')).verify(happenedOnce);
+      });
     });
 
     test('throw if the socket was already closed', () {
       cnx._socket = null;
-      cnx.close().catchError(
-        expectAsync1((message) {
-          expect(message is String, isTrue);
-      })
-      );
+      return cnx.close().catchError((message) {
+        expect(message, new isInstanceOf<String>());
+      });
     });
   });
 }
+
+class MockSocket extends Mock implements Socket {}
