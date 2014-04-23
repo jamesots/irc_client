@@ -20,6 +20,8 @@ class BotHandler extends Handler {
       cnx.sendNotice(user, "This is an ${BOLD}example${BOLD} dart bot");
       cnx.sendNotice(user, "It isn't very useful");
     }
+    if (message.toLowerCase() == "quit")
+      cnx.close();
     return true;
   }
   

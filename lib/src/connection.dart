@@ -130,6 +130,19 @@ class Connection {
     });
   }
   
+  /**
+   * Attempts to disconnect to the server that this connection handles.
+   */
+  void close() {
+    if(_socket == null) {
+      ioLog.warning("Can't close an already closed connection");
+      return;
+    }
+    // the warning is due to _socket being an _Socket, but we can't subclass it to ClosableStringSink
+    _socket.close();
+    _socket = null;
+  }
+
   _onError(error) {
     // TODO: what?
   }
