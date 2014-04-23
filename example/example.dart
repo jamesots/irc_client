@@ -3,6 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 
 class BotHandler extends Handler {
   bool onChannelMessage(String channel, String message, Connection cnx) {
@@ -19,6 +20,14 @@ class BotHandler extends Handler {
     if (message.toLowerCase() == "help") {
       cnx.sendNotice(user, "This is an ${BOLD}example${BOLD} dart bot");
       cnx.sendNotice(user, "It isn't very useful");
+    }
+    if (message.toLowerCase() == "quit") {
+      cnx.close()
+          .then((socket) {
+            print("Connection closed for ${socket.remoteAddress}");
+            exit(0);
+          })
+          .catchError((message) => print(message));
     }
     return true;
   }

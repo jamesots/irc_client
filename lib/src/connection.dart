@@ -6,7 +6,7 @@ part of irc_client;
  */
 class Connection {
   Logger ioLog = new Logger("io");
-  StringSink _socket;
+  Socket _socket;
   String _nick;
   String _server;
   String _realName;
@@ -130,6 +130,23 @@ class Connection {
     });
   }
   
+  /**
+   * Attempts to disconnect from the server that this connection handles.
+   */
+  Future<Socket> close() {
+    var completer = new Completer();
+    if (_socket == null) {
+      ioLog.warning("Can't close an already closed connection");
+      completer.completeError("The connection is already closed");
+    } else {
+      _socket.close().then((closedSocket) {
+        _onDone();
+        return completer.complete(closedSocket);
+      });
+    }
+    return completer.future;
+  }
+
   _onError(error) {
     // TODO: what?
   }
