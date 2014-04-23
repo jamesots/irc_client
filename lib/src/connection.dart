@@ -133,14 +133,15 @@ class Connection {
   /**
    * Attempts to disconnect to the server that this connection handles.
    */
-  void close() {
-    if(_socket == null) {
+  Future<Socket> close() {
+    var completer = new Completer();
+    if (_socket == null) {
       ioLog.warning("Can't close an already closed connection");
-      return;
+      completer.completeError("The connection is already closed");
     }
-    // the warning is due to _socket being an _Socket, but we can't subclass it to ClosableStringSink
-    _socket.close();
-    _socket = null;
+    else
+      _socket.close().then((closedSocket) => completer.complete(closedSocket));
+    return completer.future;
   }
 
   _onError(error) {
