@@ -195,5 +195,22 @@ main() {
       expect(socket.sb.toString(), equals("NICK bob\n"));
       expect(cnx.nick, equals("bob"));
     });
+
+    test('should close properly, returning the socket', () {
+      cnx.close().then(
+        expectAsync1((value) {
+          expect(value, equals(socket));
+      })
+      );
+    });
+
+    test('throw if the socket was already closed', () {
+      cnx._socket = null;
+      cnx.close().catchError(
+        expectAsync1((message) {
+          expect(message is String, isTrue);
+      })
+      );
+    });
   });
 }
