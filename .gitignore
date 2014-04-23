@@ -1,3 +1,5 @@
 packages
 pubspec.lock
 docs
+.idea
+*.iml
