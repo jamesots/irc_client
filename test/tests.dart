@@ -154,7 +154,7 @@ main() {
     setUp(() {
       sb = new StringBuffer();
       socket = new MockSocket();
-      socket.when(callsTo('writeln')).thenCall(sb.writeln);
+      socket.when(callsTo('writeln')).alwaysCall(sb.writeln);
       cnx = new Connection._(null, null, null, null, new List<Handler>());
       cnx._socket = socket;
     });
@@ -184,6 +184,57 @@ main() {
       cnx.setNick("bob");
       expect(sb.toString(), equals("NICK bob\n"));
       expect(cnx.nick, equals("bob"));
+    });
+
+    test('should split messages on last whitespace if > LIMIT_MESSAGE_SIZE', () {
+      var command = "CMD person";
+      var message1 = new StringBuffer(), message2 = new StringBuffer("bbbbb"),
+          message3 = new StringBuffer();
+      for (var i = 0; i < MAX_MESSAGE_SIZE - 10; i++) {
+        message1.write("a");
+      }
+      for (var i = 0; i < 20; i++) {
+        message3.write("c");
+      }
+      cnx.splitAndWrite(command, "${message1.toString()} ${message2.toString()} ${message3.toString()}");
+      var socketWriteLogs = socket.getLogs(callsTo('writeln'))
+          ..verify(happenedExactly(2));
+      expect(socketWriteLogs.logs[0].args, equals(["$command :${message1.toString()} ${message2.toString()}"]));
+      expect(socketWriteLogs.logs[1].args, equals(["$command :${message3.toString()}"]));
+    });
+
+    test('should split messages that are > LIMIT_MESSAGE_SIZE  without spaces in multiple requests', () {
+      var command = "CMD person";
+      var messagePart1 = new StringBuffer(), messagePart2 = new StringBuffer(), messagePart3 = new StringBuffer();
+      for (var i = 0; i < MAX_MESSAGE_SIZE; i++) {
+        messagePart1.write("a");
+        messagePart2.write("b");
+        messagePart3.write("c");
+      }
+      cnx.splitAndWrite(command,
+          "${messagePart1.toString()}${messagePart2.toString()}${messagePart3.toString()}");
+      var socketWriteLogs = socket.getLogs(callsTo('writeln'))
+          ..verify(happenedExactly(3));
+      expect(socketWriteLogs.logs[0].args, equals(["$command :${messagePart1.toString()}"]));
+      expect(socketWriteLogs.logs[1].args, equals(["$command :${messagePart2.toString()}"]));
+      expect(socketWriteLogs.logs[2].args, equals(["$command :${messagePart3.toString()}"]));
+    });
+
+    test('should split existing messages on whitespace, and let the following one > LIMIT_MESSAGE_SIZE '
+         'without spaces on its own requests', () {
+      var command = "CMD person";
+      var message1 = new StringBuffer("aaaa"), message2Part1 = new StringBuffer(),
+          message2Part2 = new StringBuffer("bbbbb"), message3 = new StringBuffer("ccccc");
+      for (var i = 0; i < MAX_MESSAGE_SIZE; i++) {
+        message2Part1.write("b");
+      }
+      cnx.splitAndWrite(command, "${message1.toString()} ${message2Part1.toString()}${message2Part2.toString()} "
+                                 "${message3.toString()}");
+      var socketWriteLogs = socket.getLogs(callsTo('writeln'))
+          ..verify(happenedExactly(3));
+      expect(socketWriteLogs.logs[0].args, equals(["$command :${message1.toString()}"]));
+      expect(socketWriteLogs.logs[1].args, equals(["$command :${message2Part1.toString()}"]));
+      expect(socketWriteLogs.logs[2].args, equals(["$command :${message2Part2.toString()} ${message3.toString()}"]));
     });
 
     test('should close properly, returning the socket', () {

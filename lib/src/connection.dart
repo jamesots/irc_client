@@ -1,5 +1,7 @@
 part of irc_client;
 
+const MAX_MESSAGE_SIZE = 411;
+
 /**
  * The [Connection] object is passed to methods on the [Handler]s, so that they
  * can send commands back to the IRC server.
@@ -30,17 +32,49 @@ class Connection {
   }
   
   /**
+   * Prepare the [message] to  be sent to the irc server, prefixed with [command].
+   * It will cap the user message length to [MAX_MESSAGE_SIZE] if it exceeds it,
+   * issuing then multiple requests.
+   */
+  void splitAndWrite(String command, String message) {
+    var messages = new List<String>();
+    if (message.length > MAX_MESSAGE_SIZE) {
+      ioLog.fine("message longer than $MAX_MESSAGE_SIZE, splitting it");
+      var separatedList = message.split(" ");
+      var sb = new StringBuffer();
+      separatedList.forEach((elem) {
+        if ((sb.length != 0) && (sb.length + elem.length > MAX_MESSAGE_SIZE)) {
+          messages.add(sb.toString());
+          sb.clear();
+        }
+        while (elem.length > MAX_MESSAGE_SIZE) {
+          messages.add(elem.substring(0, MAX_MESSAGE_SIZE));
+          elem = elem.substring(MAX_MESSAGE_SIZE);
+        }
+        if (sb.length != 0) {
+          sb.write(" ");
+        }
+        sb.write(elem);
+      });
+      messages.add(sb.toString());
+    } else {
+      messages.add(message);
+    }
+    messages.forEach((message) => write("$command :${message}"));
+  }
+
+  /**
    * Sends a private [message] to the [nickOrChannel]. 
    */
   void sendMessage(String nickOrChannel, String message) {
-    write("${Commands.PRIVMSG} ${nickOrChannel} :${message}");
+    splitAndWrite("${Commands.PRIVMSG} ${nickOrChannel}", message);
   }
   
   /**
    * Sends a [notice] to the [user].
    */
   void sendNotice(String user, String notice) {
-    write("${Commands.NOTICE} ${user} :${notice}");
+    splitAndWrite("${Commands.NOTICE} ${user}", notice);
   }
   
   /**
