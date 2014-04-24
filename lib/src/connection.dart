@@ -1,6 +1,6 @@
 part of irc_client;
 
-const LIMIT_MESSAGE_SIZE = 411;
+const MAX_MESSAGE_SIZE = 411;
 
 /**
  * The [Connection] object is passed to methods on the [Handler]s, so that they
@@ -33,25 +33,25 @@ class Connection {
   
   /**
    * Prepare the [message] to  be sent to the irc server, prefixed with [command].
-   * It will cap the user message length to [LIMIT_MESSAGE_SIZE] if it exceeds it,
+   * It will cap the user message length to [MAX_MESSAGE_SIZE] if it exceeds it,
    * issuing then multiple requests.
    */
   void splitAndWrite(String command, String message) {
     var messages = new List<String>();
-    if (message.length > LIMIT_MESSAGE_SIZE) {
-      ioLog.fine("message longer than $LIMIT_MESSAGE_SIZE, splitting it");
+    if (message.length > MAX_MESSAGE_SIZE) {
+      ioLog.fine("message longer than $MAX_MESSAGE_SIZE, splitting it");
       var separatedList = message.split(" ");
       var sb = new StringBuffer();
       separatedList.forEach((elem) {
-        if ((sb.length != 0) && (sb.length + elem.length > LIMIT_MESSAGE_SIZE)) {
+        if ((sb.length != 0) && (sb.length + elem.length > MAX_MESSAGE_SIZE)) {
           messages.add(sb.toString());
           sb.clear();
         }
-        while(elem.length > LIMIT_MESSAGE_SIZE) {
-          messages.add(elem.substring(0, LIMIT_MESSAGE_SIZE));
-          elem = elem.substring(LIMIT_MESSAGE_SIZE);
+        while (elem.length > MAX_MESSAGE_SIZE) {
+          messages.add(elem.substring(0, MAX_MESSAGE_SIZE));
+          elem = elem.substring(MAX_MESSAGE_SIZE);
         }
-        if(sb.length != 0) {
+        if (sb.length != 0) {
           sb.write(" ");
         }
         sb.write(elem);
