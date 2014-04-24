@@ -188,11 +188,11 @@ main() {
 
     test('should split messages on last whitespace if > LIMIT_MESSAGE_SIZE', () {
       var command = "CMD person";
-      var sbMessage1 = new StringBuffer(), sbMessage2 = new StringBuffer(), sbMessage3 = new StringBuffer();
+      var sbMessage1 = new StringBuffer(), sbMessage2 = new StringBuffer("bbbbb"),
+          sbMessage3 = new StringBuffer();
       for (var i = 0; i < LIMIT_MESSAGE_SIZE-10; i++) {
         sbMessage1.write("a");
       }
-      sbMessage2.write("bbbbb");
       for (var i = 0; i < 20; i++) {
         sbMessage3.write("c");
       }
@@ -210,11 +210,28 @@ main() {
         sbMessagePart2.write("b");
         sbMessagePart3.write("c");
       }
-      cnx.splitAndWrite(command, "${sbMessagePart1.toString()}${sbMessagePart2.toString()}${sbMessagePart3.toString()}");
+      cnx.splitAndWrite(command,
+          "${sbMessagePart1.toString()}${sbMessagePart2.toString()}${sbMessagePart3.toString()}");
       socket.getLogs(callsTo('writeln')).verify(happenedExactly(3));
       expect(socket.getLogs(callsTo('writeln')).logs[0].args, equals(["$command :${sbMessagePart1.toString()}"]));
       expect(socket.getLogs(callsTo('writeln')).logs[1].args, equals(["$command :${sbMessagePart2.toString()}"]));
       expect(socket.getLogs(callsTo('writeln')).logs[2].args, equals(["$command :${sbMessagePart3.toString()}"]));
+    });
+
+    test('should split existing messages on whitespace, and let the following one > LIMIT_MESSAGE_SIZE '
+         'without spaces on its own requests', () {
+      var command = "CMD person";
+      var sbMessage1 = new StringBuffer("aaaa"), sbMessage2Part1 = new StringBuffer(),
+          sbMessage2Part2 = new StringBuffer("bbbbb"), sbMessage3 = new StringBuffer("ccccc");
+      for (var i = 0; i < LIMIT_MESSAGE_SIZE; i++) {
+        sbMessage2Part1.write("b");
+      }
+      cnx.splitAndWrite(command, "${sbMessage1.toString()} ${sbMessage2Part1.toString()}${sbMessage2Part2.toString()} "
+                                 "${sbMessage3.toString()}");
+      socket.getLogs(callsTo('writeln')).verify(happenedExactly(3));
+      expect(socket.getLogs(callsTo('writeln')).logs[0].args, equals(["$command :${sbMessage1.toString()}"]));
+      expect(socket.getLogs(callsTo('writeln')).logs[1].args, equals(["$command :${sbMessage2Part1.toString()}"]));
+      expect(socket.getLogs(callsTo('writeln')).logs[2].args, equals(["$command :${sbMessage2Part2.toString()} ${sbMessage3.toString()}"]));
     });
 
     test('should close properly, returning the socket', () {
